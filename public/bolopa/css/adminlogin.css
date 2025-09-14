@@ -1,0 +1,302 @@
+@import url('https://rsms.me/inter/inter-ui.css');
+::selection {
+  background: #2D2F36;
+}
+::-webkit-selection {
+  background: #2D2F36;
+}
+::-moz-selection {
+  background: #2D2F36;
+}
+body {
+  background: #e2e2e5;
+  font-family: 'Inter UI', sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+.page {
+  background: #e2e2e5;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 40px);
+  position: absolute;
+  place-content: center;
+  width: calc(100% - 40px);
+}
+@media (max-width: 767px) {
+  .page {
+    height: auto;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+  }
+}
+.container {
+  display: flex;
+  height: 320px;
+  margin: 0 auto;
+  width: 640px;
+}
+@media (max-width: 767px) {
+  .container {
+    flex-direction: column;
+    height: 630px;
+    width: 320px;
+  }
+}
+.left {
+  background: white;
+  height: calc(100% - 40px);
+  top: 20px;
+  position: relative;
+  width: 50%;
+}
+@media (max-width: 767px) {
+  .left {
+    height: 100%;
+    left: 20px;
+    width: calc(100% - 40px);
+    max-height: 270px;
+  }
+}
+.login {
+  margin: 50px 40px 20px;
+  text-align: center;
+}
+
+.logo-image {
+  max-width: 200px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.eula {
+  color: #666;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 20px 40px;
+  text-align: center;
+}
+
+.admin-login {
+  color: #333;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  margin: 10px 40px 40px;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+.right {
+  background: #474A59;
+  box-shadow: 0px 0px 40px 16px rgba(0,0,0,0.22);
+  color: #F1F1F2;
+  position: relative;
+  width: 50%;
+}
+@media (max-width: 767px) {
+  .right {
+    flex-shrink: 0;
+    height: 100%;
+    width: 100%;
+    max-height: 350px;
+  }
+}
+svg {
+  position: absolute;
+  width: 320px;
+}
+path {
+  fill: none;
+  stroke: url(#linearGradient);;
+  stroke-width: 4;
+  stroke-dasharray: 240 1386;
+}
+.form {
+  margin: 40px;
+  position: absolute;
+}
+label {
+  color:  #c2c2c5;
+  display: block;
+  font-size: 14px;
+  height: 16px;
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+input {
+  background: transparent;
+  border: 0;
+  color: #f2f2f2;
+  font-size: 20px;
+  height: 30px;
+  line-height: 30px;
+  outline: none !important;
+  width: 100%;
+}
+input::-moz-focus-inner {
+  border: 0;
+}
+#submit {
+  color: #707075;
+  margin-top: 40px;
+  transition: color 300ms;
+}
+#submit:focus {
+  color: #f2f2f2;
+}
+#submit:active {
+  color: #d0d0d2;
+}
+
+.btn-login i {
+    font-size: 16px;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.logo img {
+    width: 146px;
+    height: 90px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Password toggle button */
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.password-toggle:hover {
+    color: #374151;
+    background-color: #f3f4f6;
+}
+
+/* Professional styling for icons in labels */
+.form-group label i {
+    margin-right: 8px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    /* Mobile */
+    .login-container {
+        margin: 16px;
+        padding: 32px 24px;
+        max-width: none;
+    }
+
+    .login-header h2 {
+        font-size: 20px;
+    }
+
+    .form-group input {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    /* Tablet */
+    .login-container {
+        max-width: 380px;
+        padding: 36px;
+    }
+
+    .login-header h2 {
+        font-size: 22px;
+    }
+}
+
+@media (min-width: 1025px) {
+    /* Desktop */
+    .login-container {
+        max-width: 400px;
+        padding: 40px;
+    }
+
+    .login-header h2 {
+        font-size: 24px;
+    }
+}
+
+/* Professional color scheme */
+:root {
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --secondary-color: #6b7280;
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --background-color: #f9fafb;
+    --card-background: #ffffff;
+    --border-color: #e5e7eb;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+}
+
+/* Loading spinner override */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.1em;
+}
+
+/* Focus states for accessibility */
+.form-group input:focus {
+    border-color: var(--primary-color);
+}
+
+.btn-login:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Professional form layout */
+.form-group {
+    position: relative;
+}
+
+.form-group input::placeholder {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+/* Responsive styles for logo and text */
+@media (max-width: 767px) {
+  .logo-image {
+    max-width: 150px;
+  }
+
+  .eula {
+    font-size: 14px;
+    margin: 15px 20px;
+  }
+
+  .admin-login {
+    font-size: 16px;
+    margin: 8px 20px 30px;
+  }
+}
