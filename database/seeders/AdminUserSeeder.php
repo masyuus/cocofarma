@@ -19,6 +19,14 @@ class AdminUserSeeder extends Seeder
             'username' => 'lopa123',
             'email' => 'admin@cocofarma.com',
             'password' => Hash::make('lopa123'),
-        ]);
+            ]);
+            User::updateOrCreate([
+                'username' => 'lopa123'
+            ], [
+                'name' => 'Super Admin',
+                'email' => 'lopa123@cocofarma.com',
+                'password' => Hash::make('lopa123'),
+                'role' => 'superadmin',
+            ]);
     }
 }

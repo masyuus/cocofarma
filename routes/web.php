@@ -19,17 +19,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Mimin route - redirect to login or dashboard
-Route::get('/mimin', function () {
-    if (Auth::check()) {
-        return redirect('/backoffice/dashboard');
-    }
-    return redirect('/backoffice/login');
-})->name('mimin');
-
 // Admin routes
-Route::get('/backoffice/login', [AdminController::class, 'showLogin'])->name('admin.login');
-Route::post('/backoffice/login', [AdminController::class, 'login']);
+Route::get('/mimin', [AdminController::class, 'showLogin'])->name('admin.login');
+Route::post('/mimin', [AdminController::class, 'login']);
 Route::post('/backoffice/logout', [AdminController::class, 'logout'])->name('admin.logout');
 
 Route::middleware('auth')->group(function () {

@@ -20,8 +20,13 @@ class AdminController extends Controller
             'password' => 'required',
         ]);
 
+
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
             $request->session()->regenerate();
+            // Simpan role ke session
+            $user = Auth::user();
+            session(['role' => $user->role]);
+            // Redirect ke dashboard, bisa dibedakan jika ingin
             return redirect()->back()->with('success', 'Login berhasil! Selamat datang di Backoffice.');
         }
 
@@ -35,9 +40,11 @@ class AdminController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/backoffice/login');
+    Auth::logout();
+    $request->session()->forget('role');
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    // Redirect ke form login admin
+    return redirect()->route('admin.login');
     }
 }
