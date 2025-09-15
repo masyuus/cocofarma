@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Cocofarma Backoffice</title>
     <link rel="stylesheet" href="https://rsms.me/inter/inter-ui.css">
-    <link rel="stylesheet" href="{{ asset('bolopa/css/admin-login.css') }}">
+    <link rel="stylesheet" href="{{ asset('bolopa/back/css/admin-login.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 </head>
@@ -16,7 +16,7 @@
         <div class="container">
             <div class="left">
                 <div class="login">
-                    <img src="{{ asset('bolopa/images/gif/COCOFARMAbyLoopA.gif') }}" class="logo-image">
+                    <img src="{{ asset('bolopa/back/images/gif/COCOFARMAbyLoopA.gif') }}" class="logo-image">
                 </div>
                 <div class="eula">Management System</div>
                 <div class="admin-login">Admin Login</div>
@@ -36,17 +36,68 @@
                 <form method="POST" action="{{ route('admin.login') }}" id="loginForm" class="form">
                     @csrf
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" value="{{ old('username') }}" required
-                        autofocus>
+                    <div class="input-container">
+                        <input type="text" id="username" name="username" value="{{ old('username') }}" required
+                            autofocus>
+                    </div>
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                    <input type="submit" id="submit" value="Submit">
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" required style="padding-right:40px;">
+                        <button type="button" id="togglePassword" class="password-toggle" tabindex="-1" aria-label="Show password" style="position:absolute;top:50%;right:10px;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#6b7280;">
+                            <img id="eyeIcon" src="{{ asset('bolopa/back/images/icon/el--eye-close.svg') }}" alt="Show password" style="width:20px;height:20px;">
+                        </button>
+                    </div>
+                    <button type="submit" id="submit" class="submit-btn">
+                        <img src="{{ asset('bolopa/back/images/icon/mingcute--safe-lock-fill.svg') }}" alt="Lock" style="width:20px;height:20px;filter:brightness(0) invert(1);">
+                        <span>Secure Login</span>
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
+        // Show/hide password logic
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        let passwordVisible = false;
+
+        // Make sure toggle button is always visible
+        togglePassword.style.display = 'block';
+        togglePassword.style.visibility = 'visible';
+        togglePassword.style.opacity = '1';
+
+        togglePassword.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            passwordVisible = !passwordVisible;
+            passwordInput.type = passwordVisible ? 'text' : 'password';
+            eyeIcon.src = passwordVisible ? '{{ asset('bolopa/back/images/icon/el--eye-open.svg') }}' : '{{ asset('bolopa/back/images/icon/el--eye-close.svg') }}';
+        });
+
+        // Ensure toggle button remains visible
+        passwordInput.addEventListener('focus', function() {
+            togglePassword.style.display = 'block';
+            togglePassword.style.visibility = 'visible';
+            togglePassword.style.opacity = '1';
+        });
+
+        passwordInput.addEventListener('blur', function() {
+            setTimeout(() => {
+                togglePassword.style.display = 'block';
+                togglePassword.style.visibility = 'visible';
+                togglePassword.style.opacity = '1';
+            }, 100);
+        });
+
+        // Prevent button from losing focus on click
+        togglePassword.addEventListener('blur', function() {
+            setTimeout(() => {
+                togglePassword.style.display = 'block';
+                togglePassword.style.visibility = 'visible';
+                togglePassword.style.opacity = '1';
+            }, 100);
+        });
         // Check for session messages
         @if (session('success'))
             Swal.fire({
