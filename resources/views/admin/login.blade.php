@@ -49,7 +49,7 @@
                     </div>
                     <button type="submit" id="submit" class="submit-btn">
                         <img src="{{ asset('bolopa/back/images/icon/mingcute--safe-lock-fill.svg') }}" alt="Lock" style="width:20px;height:20px;filter:brightness(0) invert(1);">
-                        <span>Secure Login</span>
+                        <span style="color: white">Secure Login</span>
                     </button>
                 </form>
             </div>

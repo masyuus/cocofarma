@@ -251,7 +251,6 @@ input::-moz-focus-inner {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Password toggle button */
 .password-toggle {
     position: absolute;
     right: 12px;
@@ -285,6 +284,12 @@ input::-moz-focus-inner {
 
 .password-toggle:hover img {
     filter: brightness(1);
+}
+
+/* Ubah warna SVG pada input password */
+.password-toggle img,
+.password-toggle svg {
+   filter: invert(14%) sepia(89%) saturate(3450%) hue-rotate(327deg) brightness(122%) contrast(122%) !important;
 }
 
 /* Password input container */
@@ -432,4 +437,18 @@ input:focus {
   max-width: 100%;
   position: relative;
   z-index: 1;
+}
+
+/* Safari/iOS */
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container,
+input[type="password"]::-webkit-clear-button,
+input[type="password"]::-webkit-reveal-button {
+  display: none;
+}
+
+/* Edge/IE */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
 }
