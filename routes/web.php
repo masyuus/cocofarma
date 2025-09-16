@@ -26,6 +26,15 @@ Route::post('/backoffice/logout', [AdminController::class, 'logout'])->name('adm
 
 Route::middleware('auth')->group(function () {
     Route::get('/backoffice/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    // Placeholder admin resource routes for sidebar links (create real controllers later)
+    Route::get('/backoffice/orders', function(){ return view('admin.placeholder', ['title' => 'Pesanan']); })->name('admin.orders.index');
+    Route::get('/backoffice/rawmaterials', function(){ return view('admin.placeholder', ['title' => 'Bahan Baku']); })->name('admin.rawmaterials.index');
+    Route::get('/backoffice/production', function(){ return view('admin.placeholder', ['title' => 'Produksi']); })->name('admin.production.index');
+    Route::get('/backoffice/sales', function(){ return view('admin.placeholder', ['title' => 'Penjualan / Transaksi']); })->name('admin.sales.index');
+    Route::get('/backoffice/reports', function(){ return view('admin.placeholder', ['title' => 'Laporan']); })->name('admin.reports.index');
+    Route::get('/backoffice/products', function(){ return view('admin.placeholder', ['title' => 'Produk']); })->name('admin.products.index');
+    Route::get('/backoffice/users', function(){ return view('admin.placeholder', ['title' => 'User & Hak Akses']); })->name('admin.users.index');
+    Route::get('/backoffice/settings', function(){ return view('admin.placeholder', ['title' => 'Pengaturan Sistem']); })->name('admin.settings.index');
 });
 
 require __DIR__.'/auth.php';
