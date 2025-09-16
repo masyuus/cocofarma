@@ -1,25 +1,85 @@
 <header class="admin-header">
+    @php
+        if(!function_exists('route_exists')){
+            function route_exists($name){
+                return 
+                    class_exists(\Illuminate\Support\Facades\Route::class) && \Illuminate\Support\Facades\Route::has($name);
+            }
+        }
+    @endphp
     <div class="header-content">
         <div class="breadcrumb-section">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="#" class="text-decoration-none">
-                            <i class="bx bx-home-alt"></i>
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                        {{ $pageTitle ?? 'Dashboard' }}
-                    </li>
-                </ol>
+                        @php
+                            // Compute breadcrumb based on current admin route
+                            $crumbs = [];
+                            // Home / Dashboard
+                            $crumbs[] = ['label' => 'Dashboard', 'url' => route_exists('admin.dashboard') ? route('admin.dashboard') : '#'];
+
+                            // Operasional group
+                            if(request()->routeIs('admin.orders.*') || request()->routeIs('admin.production.*') || request()->routeIs('admin.sales.*') || request()->routeIs('admin.reports.*') || request()->routeIs('admin.rawmaterials.*')){
+                                $crumbs[] = ['label' => 'Operasional', 'url' => route_exists('admin.orders.index') ? route('admin.orders.index') : '#'];
+                            }
+
+                            // Master group
+                            if(request()->routeIs('admin.products.*') || request()->routeIs('admin.users.*') || request()->routeIs('admin.settings.*') ){
+                                $crumbs[] = ['label' => 'Master', 'url' => route_exists('admin.products.index') ? route('admin.products.index') : '#'];
+                            }
+
+                            // Specific page
+                            if(request()->routeIs('admin.orders.*')){ $crumbs[] = ['label' => 'Pesanan', 'url' => route_exists('admin.orders.index') ? route('admin.orders.index') : '#']; }
+                            if(request()->routeIs('admin.rawmaterials.*')){ $crumbs[] = ['label' => 'Bahan Baku', 'url' => route_exists('admin.rawmaterials.index') ? route('admin.rawmaterials.index') : '#']; }
+                            if(request()->routeIs('admin.products.*')){ $crumbs[] = ['label' => 'Produk', 'url' => route_exists('admin.products.index') ? route('admin.products.index') : '#']; }
+                            if(request()->routeIs('admin.production.*')){ $crumbs[] = ['label' => 'Produksi', 'url' => route_exists('admin.production.index') ? route('admin.production.index') : '#']; }
+                            if(request()->routeIs('admin.sales.*')){ $crumbs[] = ['label' => 'Penjualan', 'url' => route_exists('admin.sales.index') ? route('admin.sales.index') : '#']; }
+                            if(request()->routeIs('admin.reports.*')){ $crumbs[] = ['label' => 'Laporan', 'url' => route_exists('admin.reports.index') ? route('admin.reports.index') : '#']; }
+                            if(request()->routeIs('admin.users.*')){ $crumbs[] = ['label' => 'User & Hak Akses', 'url' => route_exists('admin.users.index') ? route('admin.users.index') : '#']; }
+                            if(request()->routeIs('admin.settings.*')){ $crumbs[] = ['label' => 'Pengaturan Sistem', 'url' => route_exists('admin.settings.index') ? route('admin.settings.index') : '#']; }
+
+                            // Helper for page title
+                            $computedTitle = end($crumbs)['label'] ?? ($pageTitle ?? 'Dashboard');
+                        @endphp
+
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route_exists('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="text-decoration-none">
+                                    <i class="bx bx-home-alt"></i>
+                                </a>
+                            </li>
+                            @foreach($crumbs as $index => $c)
+                                @if($index === 0)
+                                    {{-- skip dashboard here because we render home icon above --}}
+                                    @continue
+                                @endif
+                                <li class="breadcrumb-item {{ $loop->last ? 'active' : '' }}" {{ $loop->last ? 'aria-current=page' : '' }}>
+                                    @if(!$loop->last && $c['url'] !== '#')
+                                        <a href="{{ $c['url'] }}">{{ $c['label'] }}</a>
+                                    @else
+                                        {{ $c['label'] }}
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ol>
             </nav>
-            <h1 class="page-title">{{ $pageTitle ?? 'Dashboard' }}</h1>
+            <h1 class="page-title">{{ $pageTitle ?? $computedTitle }}</h1>
         </div>
 
         <div class="header-actions">
-            <div class="search-box">
-                <input type="text" class="form-control" placeholder="Search..." id="headerSearch">
-                <i class="bx bx-search search-icon"></i>
+            <div class="system-info">
+                <div class="date-time">
+                    <div class="date">
+                        <i class="bx bx-calendar"></i>
+                        <span id="currentDate">{{ now()->format('l, d M Y') }}</span>
+                    </div>
+                    <div class="time">
+                        <i class="bx bx-time"></i>
+                        <span id="currentTime">{{ now()->format('H:i:s') }}</span>
+                    </div>
+                </div>
+                <div class="status">
+                    <i class="bx bx-circle" style="color: #28a745;"></i>
+                    <span>Online</span>
+                </div>
             </div>
 
             <div class="notifications">
@@ -33,11 +93,11 @@
                 <div class="dropdown">
                     <button class="btn btn-link dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="user-avatar">
-                            <span>AD</span>
+                            <span>{{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}</span>
                         </div>
                         <div class="user-info d-none d-md-block">
-                            <div class="user-name">Admin</div>
-                            <div class="user-role">Administrator</div>
+                            <div class="user-name">{{ Auth::user()->name ?? 'Admin' }}</div>
+                            <div class="user-role">{{ Auth::user()->role ?? 'Administrator' }}</div>
                         </div>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
@@ -54,13 +114,14 @@
 
 <style>
 .admin-header {
-    background: #fff;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     border-bottom: 1px solid #e9ecef;
-    padding: 1rem 0;
+    padding: 1.5rem 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    backdrop-filter: blur(10px);
 }
 
 .header-content {
@@ -98,8 +159,18 @@
 }
 
 .breadcrumb-item.active {
+    color: #4299e1;
+    font-weight: 700;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
     color: #495057;
-    font-weight: 500;
+    text-decoration: underline;
 }
 
 .breadcrumb-item + .breadcrumb-item::before {
@@ -110,42 +181,59 @@
 
 .page-title {
     font-size: 1.75rem;
-    font-weight: 600;
+    font-weight: 700;
     color: #2d3748;
     margin: 0;
+    background: linear-gradient(135deg, #2d3748 0%, #4299e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
-.search-box {
-    position: relative;
-    width: 250px;
+.system-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    font-size: 0.875rem;
+    color: #6c757d;
 }
 
-.search-box .form-control {
-    padding-right: 2.5rem;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    background: #f8fafc;
+.date-time, .status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.search-box .form-control:focus {
-    background: #fff;
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+.date-time {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
 }
 
-.search-icon {
-    position: absolute;
-    right: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #a0aec0;
-    font-size: 1.1rem;
+.date, .time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.time {
+    color: #718096;
+    font-weight: 500;
+}
+
+.date-time i, .status i {
+    font-size: 1rem;
+}
+
+.status i {
+    font-size: 0.75rem;
 }
 
 .notifications .btn {
@@ -156,8 +244,10 @@
 }
 
 .notifications .btn:hover {
-    background: #f7fafc;
-    color: #4a5568;
+    background: rgba(66, 153, 225, 0.1);
+    color: #4299e1;
+    transform: scale(1.05);
+    transition: all 0.2s ease;
 }
 
 .notifications .badge {
@@ -174,18 +264,26 @@
     color: #718096;
     padding: 0.5rem;
     border-radius: 8px;
+    text-decoration: none !important;
 }
 
 .user-menu .btn:hover {
-    background: #f7fafc;
-    color: #4a5568;
+    background: transparent;
+    color: #718096;
+    transform: none;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+}
+
+.user-menu .btn * {
+    text-decoration: none !important;
 }
 
 .user-avatar {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -204,12 +302,14 @@
     font-weight: 600;
     color: #2d3748;
     line-height: 1.2;
+    text-decoration: none !important;
 }
 
 .user-role {
     font-size: 0.75rem;
     color: #718096;
     line-height: 1.2;
+    text-decoration: none !important;
 }
 
 .dropdown-menu {
@@ -227,16 +327,19 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    text-decoration: none !important;
 }
 
 .dropdown-item:hover {
     background: #f7fafc;
     color: #2d3748;
+    text-decoration: none !important;
 }
 
 .dropdown-item.text-danger:hover {
     background: #fed7d7;
     color: #e53e3e;
+    text-decoration: none !important;
 }
 
 .dropdown-divider {
@@ -261,11 +364,6 @@
         flex-wrap: wrap;
     }
 
-    .search-box {
-        width: 100%;
-        max-width: 300px;
-    }
-
     .user-info {
         display: none;
     }
@@ -276,12 +374,41 @@
         font-size: 1.5rem;
     }
 
-    .search-box {
-        display: none;
-    }
-
     .header-actions {
         gap: 0.5rem;
     }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function updateDateTime() {
+        const now = new Date();
+
+        // Update date
+        const dateOptions = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        };
+        const formattedDate = now.toLocaleDateString('en-US', dateOptions);
+        document.getElementById('currentDate').textContent = formattedDate;
+
+        // Update time
+        const timeOptions = {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+        const formattedTime = now.toLocaleTimeString('en-US', timeOptions);
+        document.getElementById('currentTime').textContent = formattedTime;
+    }
+
+    // Update immediately
+    updateDateTime();
+
+    // Update every second
+    setInterval(updateDateTime, 1000);
+});
+</script>
