@@ -33,7 +33,7 @@
                     <path
                         d="m 40,120.00016 239.99984,-3.2e-4 c 0,0 24.99263,0.79932 25.00016,35.00016 0.008,34.20084 -25.00016,35 -25.00016,35 h -239.99984 c 0,-0.0205 -25,4.01348 -25,38.5 0,34.48652 25,38.5 25,38.5 h 215 c 0,0 20,-0.99604 20,-25 0,-24.00396 -20,-25 -20,-25 h -190 c 0,0 -20,1.71033 -20,25 0,24.00396 20,25 20,25 h 168.57143" />
                 </svg>
-                <form method="POST" action="{{ route('admin.login') }}" id="loginForm" class="form">
+                <form method="POST" action="{{ route('backoffice.login') }}" id="loginForm" class="form">
                     @csrf
                     <label for="username">Username</label>
                     <div class="input-container">
@@ -102,18 +102,36 @@
         @if (session('success'))
             Swal.fire({
                 icon: 'success',
-                title: '<i class="bi bi-check-circle-fill text-success"></i> Berhasil!',
-                html: '<strong>{{ session('success') }}</strong><br><small>Anda akan diarahkan ke dashboard...</small>',
+                title: '<i class="bi bi-check-circle-fill text-success"></i> Login Berhasil!',
+                html: '<strong>{{ session('success') }}</strong><br><small>Anda akan diarahkan ke dashboard dalam <span id="countdown">3</span> detik...</small>',
                 timer: 3000,
                 timerProgressBar: true,
-                showConfirmButton: false,
+                showConfirmButton: true,
+                confirmButtonText: '<i class="bi bi-check-circle"></i> OK, Lanjutkan',
+                confirmButtonColor: '#28a745',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 didOpen: () => {
-                    Swal.showLoading();
+                    // Countdown timer
+                    let countdown = 3;
+                    const countdownElement = document.getElementById('countdown');
+                    const timer = setInterval(() => {
+                        countdown--;
+                        if (countdownElement) {
+                            countdownElement.textContent = countdown;
+                        }
+                        if (countdown <= 0) {
+                            clearInterval(timer);
+                        }
+                    }, 1000);
                 },
                 willClose: () => {
-                    window.location.href = '{{ route('admin.dashboard') }}';
+                    window.location.href = '{{ route('backoffice.dashboard') }}';
+                }
+            }).then((result) => {
+                // If user clicks OK button, redirect immediately
+                if (result.isConfirmed) {
+                    window.location.href = '{{ route('backoffice.dashboard') }}';
                 }
             });
         @endif
@@ -122,7 +140,7 @@
             Swal.fire({
                 icon: 'error',
                 title: '<i class="bi bi-exclamation-triangle-fill text-danger"></i> Login Gagal!',
-                html: '<strong>{{ session('error') }}</strong><br><small>Silakan coba lagi.</small>',
+                html: '<strong>{{ session('error') }}</strong><br><small>Silakan periksa kembali username dan password Anda.</small>',
                 confirmButtonText: '<i class="bi bi-arrow-repeat"></i> Coba Lagi',
                 confirmButtonColor: '#dc3545',
                 allowOutsideClick: false

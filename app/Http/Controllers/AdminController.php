@@ -26,8 +26,8 @@ class AdminController extends Controller
             // Simpan role ke session
             $user = Auth::user();
             session(['role' => $user->role]);
-            // Redirect ke dashboard, bisa dibedakan jika ingin
-            return redirect()->back()->with('success', 'Login berhasil! Selamat datang di Backoffice.');
+            // Redirect ke dashboard
+            return redirect()->route('backoffice.dashboard')->with('success', 'Login berhasil! Selamat datang di Backoffice.');
         }
 
         return redirect()->back()->withInput()->with('error', 'Login gagal! Username atau password salah.');
@@ -44,7 +44,7 @@ class AdminController extends Controller
     $request->session()->forget('role');
     $request->session()->invalidate();
     $request->session()->regenerateToken();
-    // Redirect ke form login admin
-    return redirect()->route('admin.login');
+    // Redirect ke form login backoffice
+    return redirect()->route('backoffice.login');
     }
 }

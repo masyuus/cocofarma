@@ -7,20 +7,20 @@
   </div>
   <!-- Menu group switch: toggle between Operasional and Master -->
   <div class="menu-group-switch" aria-hidden="false">
-  <button type="button" id="menuGroupOperational" class="group-btn {{ (request()->routeIs('admin.orders.*') || request()->routeIs('admin.production.*') || request()->routeIs('admin.sales.*') || request()->routeIs('admin.reports.*')) ? 'active' : '' }}" title="Tampilkan Operasional">
+  <button type="button" id="menuGroupOperational" class="group-btn {{ (request()->routeIs('backoffice.pesanan.*') || request()->routeIs('backoffice.produksi.*') || request()->routeIs('backoffice.transaksi.*') || request()->routeIs('backoffice.laporan.*')) ? 'active' : '' }}" title="Tampilkan Operasional">
       <img class="group-icon" src="{{ asset('bolopa/back/images/icon/line-md--home-md.svg') }}" alt="operasional" style="width:18px;height:18px;filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(63deg) brightness(108%) contrast(103%);" />
       <span class="group-text">Operasional</span>
     </button>
-  <button type="button" id="menuGroupMaster" class="group-btn {{ (request()->routeIs('admin.products.*') || request()->routeIs('admin.users.*') || request()->routeIs('admin.settings.*') || request()->routeIs('admin.rawmaterials.*')) ? 'active' : '' }}" title="Tampilkan Master">
+  <button type="button" id="menuGroupMaster" class="group-btn {{ (request()->routeIs('backoffice.master-produk.*') || request()->routeIs('backoffice.master-user.*') || request()->routeIs('backoffice.pengaturan.*') || request()->routeIs('backoffice.bahanbaku.*')) ? 'active' : '' }}" title="Tampilkan Master">
       <img class="group-icon" src="{{ asset('bolopa/back/images/icon/line-md--monitor-screenshot.svg') }}" alt="master" style="width:18px;height:18px;filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(63deg) brightness(108%) contrast(103%);" />
       <span class="group-text">Master</span>
     </button>
   </div>
 
   {{-- Ensure the correct menu group is selected on first load based on the current route (without overwriting an existing user preference) --}}
-  @if(request()->routeIs('admin.orders.*') || request()->routeIs('admin.production.*') || request()->routeIs('admin.sales.*') || request()->routeIs('admin.reports.*'))
+  @if(request()->routeIs('backoffice.pesanan.*') || request()->routeIs('backoffice.produksi.*') || request()->routeIs('backoffice.transaksi.*') || request()->routeIs('backoffice.laporan.*'))
     <script>if(!localStorage.getItem('sidebar-group')) localStorage.setItem('sidebar-group','operational');</script>
-  @elseif(request()->routeIs('admin.products.*') || request()->routeIs('admin.users.*') || request()->routeIs('admin.settings.*') || request()->routeIs('admin.rawmaterials.*'))
+  @elseif(request()->routeIs('backoffice.master-produk.*') || request()->routeIs('backoffice.master-user.*') || request()->routeIs('backoffice.pengaturan.*') || request()->routeIs('backoffice.bahanbaku.*'))
     <script>if(!localStorage.getItem('sidebar-group')) localStorage.setItem('sidebar-group','master');</script>
   @endif
   <ul class="nav-list">
@@ -28,7 +28,7 @@
 
     <!-- Primary Dashboard Link -->
     <li>
-      <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+        <a href="{{ Route::has('backoffice.dashboard') ? route('backoffice.dashboard') : '#' }}" class="{{ request()->routeIs('backoffice.dashboard') ? 'active' : '' }}">
         <i class="bx bx-grid-alt"></i>
         <span class="links_name">Dashboard</span>
       </a>
@@ -41,35 +41,35 @@
       <span class="links_name group-short" style="display:none;opacity:1;color:#bbb;padding:8px 12px;font-size:13px;">-</span>
     </li>
     <li data-group="operational">
-      <a href="{{ Route::has('admin.orders.index') ? route('admin.orders.index') : '#' }}" class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+        <a href="{{ Route::has('backoffice.pesanan.index') ? route('backoffice.pesanan.index') : '#' }}" class="{{ request()->routeIs('backoffice.pesanan.*') ? 'active' : '' }}">
         <i class="bx bx-cart-alt"></i>
         <span class="links_name">Pesanan</span>
       </a>
       <span class="tooltip">Pesanan</span>
     </li>
     <li data-group="operational">
-      <a href="{{ Route::has('admin.rawmaterials.index') ? route('admin.rawmaterials.index') : '#' }}" class="{{ request()->routeIs('admin.rawmaterials.*') ? 'active' : '' }}">
+        <a href="{{ Route::has('backoffice.bahanbaku.index') ? route('backoffice.bahanbaku.index') : '#' }}" class="{{ request()->routeIs('backoffice.bahanbaku.*') ? 'active' : '' }}">
         <i class="bx bx-package"></i>
         <span class="links_name">Bahan Baku</span>
       </a>
       <span class="tooltip">Bahan Baku</span>
     </li>
     <li data-group="operational">
-      <a href="{{ Route::has('admin.production.index') ? route('admin.production.index') : '#' }}" class="{{ request()->routeIs('admin.production.*') ? 'active' : '' }}">
+        <a href="{{ Route::has('backoffice.produksi.index') ? route('backoffice.produksi.index') : '#' }}" class="{{ request()->routeIs('backoffice.produksi.*') ? 'active' : '' }}">
         <i class="bx bx-cog"></i>
         <span class="links_name">Produksi</span>
       </a>
       <span class="tooltip">Produksi</span>
     </li>
     <li data-group="operational">
-      <a href="{{ Route::has('admin.sales.index') ? route('admin.sales.index') : '#' }}" class="{{ request()->routeIs('admin.sales.*') ? 'active' : '' }}">
+        <a href="{{ Route::has('backoffice.transaksi.index') ? route('backoffice.transaksi.index') : '#' }}" class="{{ request()->routeIs('backoffice.transaksi.*') ? 'active' : '' }}">
         <i class="bx bx-wallet"></i>
         <span class="links_name">Penjualan / Transaksi</span>
       </a>
       <span class="tooltip">Penjualan</span>
     </li>
     <li data-group="operational">
-      <a href="{{ Route::has('admin.reports.index') ? route('admin.reports.index') : '#' }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
+        <a href="{{ Route::has('backoffice.laporan.index') ? route('backoffice.laporan.index') : '#' }}" class="{{ request()->routeIs('backoffice.laporan.*') ? 'active' : '' }}">
         <i class="bx bx-line-chart"></i>
         <span class="links_name">Laporan</span>
       </a>
@@ -82,28 +82,28 @@
       <span class="links_name group-short" style="display:none;opacity:1;color:#bbb;padding:8px 12px;font-size:13px;">-</span>
     </li>
       <li data-group="master">
-        <a href="{{ Route::has('admin.products.index') ? route('admin.products.index') : '#' }}" class="{{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
+          <a href="{{ Route::has('backoffice.master-produk.index') ? route('backoffice.master-produk.index') : '#' }}" class="{{ request()->routeIs('backoffice.master-produk.*') ? 'active' : '' }}">
           <i class="bx bx-package"></i>
           <span class="links_name">Produk</span>
         </a>
         <span class="tooltip">Produk</span>
       </li>
       <li data-group="master">
-        <a href="{{ Route::has('admin.rawmaterials.index') ? route('admin.rawmaterials.index') : '#' }}" class="{{ request()->routeIs('admin.rawmaterials.*') ? 'active' : '' }}">
+          <a href="{{ Route::has('backoffice.master-bahan.index') ? route('backoffice.master-bahan.index') : '#' }}" class="{{ request()->routeIs('backoffice.master-bahan.*') ? 'active' : '' }}">
           <i class="bx bx-package"></i>
           <span class="links_name">Bahan Baku</span>
         </a>
         <span class="tooltip">Bahan Baku</span>
       </li>
       <li data-group="master">
-        <a href="{{ Route::has('admin.users.index') ? route('admin.users.index') : '#' }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+          <a href="{{ Route::has('backoffice.master-user.index') ? route('backoffice.master-user.index') : '#' }}" class="{{ request()->routeIs('backoffice.master-user.*') ? 'active' : '' }}">
           <i class="bx bx-user-circle"></i>
           <span class="links_name">User & Hak Akses</span>
         </a>
         <span class="tooltip">User & Hak Akses</span>
       </li>
       <li data-group="master">
-        <a href="{{ Route::has('admin.settings.index') ? route('admin.settings.index') : '#' }}" class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+          <a href="{{ Route::has('backoffice.pengaturan.index') ? route('backoffice.pengaturan.index') : '#' }}" class="{{ request()->routeIs('backoffice.pengaturan.*') ? 'active' : '' }}">
           <i class="bx bx-slider-alt"></i>
           <span class="links_name">Pengaturan Sistem</span>
         </a>
@@ -125,7 +125,7 @@
                             <div class="job">{{ Auth::user()->role ?? '' }}</div>
                         </div>
             </div>
-                    <form id="sidebar-logout-form" action="{{ route('admin.logout') }}" method="POST" style="display:none;">
+                      <form id="sidebar-logout-form" action="{{ route('backoffice.logout') }}" method="POST" style="display:none;">
                       @csrf
                     </form>
                     <a href="#" class="logout-link" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();" title="Logout">

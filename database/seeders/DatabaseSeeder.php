@@ -13,11 +13,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create default admin users
+        User::factory()->create([
+            'name' => 'Super Admin',
+            'username' => 'superadmin',
+            'email' => 'superadmin@cocofarma.com',
+            'role' => 'super_admin',
+            'status' => true,
+        ]);
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin Produksi',
+            'username' => 'admin',
+            'email' => 'admin@cocofarma.com',
+            'role' => 'admin',
+            'status' => true,
+        ]);
+
+        // Run other seeders
+        $this->call([
+            PengaturanSeeder::class,
+            BahanBakuSeeder::class,
+            ProdukSeeder::class,
         ]);
     }
 }

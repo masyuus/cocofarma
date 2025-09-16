@@ -14,27 +14,28 @@
                             // Compute breadcrumb based on current admin route
                             $crumbs = [];
                             // Home / Dashboard
-                            $crumbs[] = ['label' => 'Dashboard', 'url' => route_exists('admin.dashboard') ? route('admin.dashboard') : '#'];
+                        $crumbs[] = ['label' => 'Dashboard', 'url' => route_exists('backoffice.dashboard') ? route('backoffice.dashboard') : '#'];
 
                             // Operasional group
-                            if(request()->routeIs('admin.orders.*') || request()->routeIs('admin.production.*') || request()->routeIs('admin.sales.*') || request()->routeIs('admin.reports.*') || request()->routeIs('admin.rawmaterials.*')){
-                                $crumbs[] = ['label' => 'Operasional', 'url' => route_exists('admin.orders.index') ? route('admin.orders.index') : '#'];
+                            if(request()->routeIs('backoffice.pesanan.*') || request()->routeIs('backoffice.produksi.*') || request()->routeIs('backoffice.transaksi.*') || request()->routeIs('backoffice.laporan.*') || request()->routeIs('backoffice.bahanbaku.*')){
+                                $crumbs[] = ['label' => 'Operasional', 'url' => route_exists('backoffice.pesanan.index') ? route('backoffice.pesanan.index') : '#'];
                             }
 
                             // Master group
-                            if(request()->routeIs('admin.products.*') || request()->routeIs('admin.users.*') || request()->routeIs('admin.settings.*') ){
-                                $crumbs[] = ['label' => 'Master', 'url' => route_exists('admin.products.index') ? route('admin.products.index') : '#'];
+                            if(request()->routeIs('backoffice.master-produk.*') || request()->routeIs('backoffice.master-user.*') || request()->routeIs('backoffice.pengaturan.*') || request()->routeIs('backoffice.master-bahan.*') ){
+                                $crumbs[] = ['label' => 'Master', 'url' => route_exists('backoffice.master-produk.index') ? route('backoffice.master-produk.index') : '#'];
                             }
 
                             // Specific page
-                            if(request()->routeIs('admin.orders.*')){ $crumbs[] = ['label' => 'Pesanan', 'url' => route_exists('admin.orders.index') ? route('admin.orders.index') : '#']; }
-                            if(request()->routeIs('admin.rawmaterials.*')){ $crumbs[] = ['label' => 'Bahan Baku', 'url' => route_exists('admin.rawmaterials.index') ? route('admin.rawmaterials.index') : '#']; }
-                            if(request()->routeIs('admin.products.*')){ $crumbs[] = ['label' => 'Produk', 'url' => route_exists('admin.products.index') ? route('admin.products.index') : '#']; }
-                            if(request()->routeIs('admin.production.*')){ $crumbs[] = ['label' => 'Produksi', 'url' => route_exists('admin.production.index') ? route('admin.production.index') : '#']; }
-                            if(request()->routeIs('admin.sales.*')){ $crumbs[] = ['label' => 'Penjualan', 'url' => route_exists('admin.sales.index') ? route('admin.sales.index') : '#']; }
-                            if(request()->routeIs('admin.reports.*')){ $crumbs[] = ['label' => 'Laporan', 'url' => route_exists('admin.reports.index') ? route('admin.reports.index') : '#']; }
-                            if(request()->routeIs('admin.users.*')){ $crumbs[] = ['label' => 'User & Hak Akses', 'url' => route_exists('admin.users.index') ? route('admin.users.index') : '#']; }
-                            if(request()->routeIs('admin.settings.*')){ $crumbs[] = ['label' => 'Pengaturan Sistem', 'url' => route_exists('admin.settings.index') ? route('admin.settings.index') : '#']; }
+                            if(request()->routeIs('backoffice.pesanan.*')){ $crumbs[] = ['label' => 'Pesanan', 'url' => route_exists('backoffice.pesanan.index') ? route('backoffice.pesanan.index') : '#']; }
+                            if(request()->routeIs('backoffice.bahanbaku.*')){ $crumbs[] = ['label' => 'Bahan Baku', 'url' => route_exists('backoffice.bahanbaku.index') ? route('backoffice.bahanbaku.index') : '#']; }
+                            if(request()->routeIs('backoffice.master-produk.*')){ $crumbs[] = ['label' => 'Produk', 'url' => route_exists('backoffice.master-produk.index') ? route('backoffice.master-produk.index') : '#']; }
+                            if(request()->routeIs('backoffice.produksi.*')){ $crumbs[] = ['label' => 'Produksi', 'url' => route_exists('backoffice.produksi.index') ? route('backoffice.produksi.index') : '#']; }
+                            if(request()->routeIs('backoffice.transaksi.*')){ $crumbs[] = ['label' => 'Penjualan', 'url' => route_exists('backoffice.transaksi.index') ? route('backoffice.transaksi.index') : '#']; }
+                            if(request()->routeIs('backoffice.laporan.*')){ $crumbs[] = ['label' => 'Laporan', 'url' => route_exists('backoffice.laporan.index') ? route('backoffice.laporan.index') : '#']; }
+                            if(request()->routeIs('backoffice.master-user.*')){ $crumbs[] = ['label' => 'User & Hak Akses', 'url' => route_exists('backoffice.master-user.index') ? route('backoffice.master-user.index') : '#']; }
+                            if(request()->routeIs('backoffice.master-bahan.*')){ $crumbs[] = ['label' => 'Bahan Baku', 'url' => route_exists('backoffice.master-bahan.index') ? route('backoffice.master-bahan.index') : '#']; }
+                            if(request()->routeIs('backoffice.pengaturan.*')){ $crumbs[] = ['label' => 'Pengaturan Sistem', 'url' => route_exists('backoffice.pengaturan.index') ? route('backoffice.pengaturan.index') : '#']; }
 
                             // Helper for page title
                             $computedTitle = end($crumbs)['label'] ?? ($pageTitle ?? 'Dashboard');
@@ -42,7 +43,7 @@
 
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item">
-                                <a href="{{ route_exists('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="text-decoration-none">
+                                <a href="{{ route_exists('backoffice.dashboard') ? route('backoffice.dashboard') : '#' }}" class="text-decoration-none">
                                     <i class="bx bx-home-alt"></i>
                                 </a>
                             </li>

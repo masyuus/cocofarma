@@ -49,8 +49,68 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- ApexCharts JS -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <!-- Global Success/Error Message Handler -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle success messages
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: '<i class="bi bi-check-circle-fill text-success"></i> Berhasil!',
+                    html: '<strong>{{ session('success') }}</strong>',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: true,
+                    confirmButtonText: '<i class="bi bi-check-circle"></i> OK',
+                    confirmButtonColor: '#28a745',
+                    allowOutsideClick: true,
+                    allowEscapeKey: true
+                });
+            @endif
+
+            // Handle error messages
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: '<i class="bi bi-exclamation-triangle-fill text-danger"></i> Error!',
+                    html: '<strong>{{ session('error') }}</strong>',
+                    confirmButtonText: '<i class="bi bi-arrow-repeat"></i> OK',
+                    confirmButtonColor: '#dc3545',
+                    allowOutsideClick: true
+                });
+            @endif
+
+            // Handle info messages
+            @if (session('info'))
+                Swal.fire({
+                    icon: 'info',
+                    title: '<i class="bi bi-info-circle-fill text-info"></i> Info!',
+                    html: '<strong>{{ session('info') }}</strong>',
+                    confirmButtonText: '<i class="bi bi-check-circle"></i> OK',
+                    confirmButtonColor: '#17a2b8',
+                    allowOutsideClick: true
+                });
+            @endif
+
+            // Handle warning messages
+            @if (session('warning'))
+                Swal.fire({
+                    icon: 'warning',
+                    title: '<i class="bi bi-exclamation-triangle-fill text-warning"></i> Peringatan!',
+                    html: '<strong>{{ session('warning') }}</strong>',
+                    confirmButtonText: '<i class="bi bi-check-circle"></i> OK',
+                    confirmButtonColor: '#ffc107',
+                    allowOutsideClick: true
+                });
+            @endif
+        });
+    </script>
 
     @stack('scripts')
 </body>

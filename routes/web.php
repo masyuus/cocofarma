@@ -2,6 +2,14 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\ProdukController;
+use App\Http\Controllers\Admin\BahanBakuController;
+use App\Http\Controllers\Admin\PesananController;
+use App\Http\Controllers\Admin\ProduksiController;
+use App\Http\Controllers\Admin\TransaksiController;
+use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\PengaturanController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -19,22 +27,63 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Admin routes
-Route::get('/mimin', [AdminController::class, 'showLogin'])->name('admin.login');
+// Backoffice authentication routes
+Route::get('/mimin', [AdminController::class, 'showLogin'])->name('backoffice.login');
 Route::post('/mimin', [AdminController::class, 'login']);
-Route::post('/backoffice/logout', [AdminController::class, 'logout'])->name('admin.logout');
+Route::post('/backoffice/logout', [AdminController::class, 'logout'])->name('backoffice.logout');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/backoffice/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    // Placeholder admin resource routes for sidebar links (create real controllers later)
-    Route::get('/backoffice/orders', function(){ return view('admin.placeholder', ['title' => 'Pesanan']); })->name('admin.orders.index');
-    Route::get('/backoffice/rawmaterials', function(){ return view('admin.placeholder', ['title' => 'Bahan Baku']); })->name('admin.rawmaterials.index');
-    Route::get('/backoffice/production', function(){ return view('admin.placeholder', ['title' => 'Produksi']); })->name('admin.production.index');
-    Route::get('/backoffice/sales', function(){ return view('admin.placeholder', ['title' => 'Penjualan / Transaksi']); })->name('admin.sales.index');
-    Route::get('/backoffice/reports', function(){ return view('admin.placeholder', ['title' => 'Laporan']); })->name('admin.reports.index');
-    Route::get('/backoffice/products', function(){ return view('admin.placeholder', ['title' => 'Produk']); })->name('admin.products.index');
-    Route::get('/backoffice/users', function(){ return view('admin.placeholder', ['title' => 'User & Hak Akses']); })->name('admin.users.index');
-    Route::get('/backoffice/settings', function(){ return view('admin.placeholder', ['title' => 'Pengaturan Sistem']); })->name('admin.settings.index');
+// Backoffice routes with role-based access
+Route::middleware(['auth'])->prefix('backoffice')->name('backoffice.')->group(function () {
+    
+    // Dashboard (accessible by both super_admin and admin)
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    // Operasional routes (accessible by both super_admin and admin)
+    Route::middleware('role:super_admin,admin')->group(function () {
+        Route::prefix('pesanan')->name('pesanan.')->group(function () {
+            Route::resource('/', PesananController::class)->parameters(['' => 'pesanan']);
+        });
+
+        Route::prefix('bahanbaku')->name('bahanbaku.')->group(function () {
+            Route::resource('/', BahanBakuController::class)->parameters(['' => 'bahanbaku']);
+        });
+
+        Route::prefix('produksi')->name('produksi.')->group(function () {
+            Route::resource('/', ProduksiController::class)->parameters(['' => 'produksi']);
+        });
+
+        Route::prefix('transaksi')->name('transaksi.')->group(function () {
+            Route::resource('/', TransaksiController::class)->parameters(['' => 'transaksi']);
+        });
+
+        Route::prefix('laporan')->name('laporan.')->group(function () {
+            Route::get('/', [LaporanController::class, 'index'])->name('index');
+            Route::get('/produksi', [LaporanController::class, 'produksi'])->name('produksi');
+            Route::get('/stok', [LaporanController::class, 'stok'])->name('stok');
+            Route::get('/penjualan', [LaporanController::class, 'penjualan'])->name('penjualan');
+            Route::get('/export-pdf/{type}', [LaporanController::class, 'exportPdf'])->name('export-pdf');
+            Route::get('/export-excel/{type}', [LaporanController::class, 'exportExcel'])->name('export-excel');
+        });
+    });
+
+    // Master routes (only accessible by super_admin)
+    Route::middleware('role:super_admin')->group(function () {
+        Route::prefix('master-produk')->name('master-produk.')->group(function () {
+            Route::resource('/', ProdukController::class)->parameters(['' => 'produk']);
+        });
+
+        Route::prefix('master-bahan')->name('master-bahan.')->group(function () {
+            Route::resource('/', BahanBakuController::class)->parameters(['' => 'bahanbaku']);
+        });
+
+        Route::prefix('master-user')->name('master-user.')->group(function () {
+            Route::resource('/', UserController::class)->parameters(['' => 'user']);
+        });
+
+        Route::prefix('pengaturan')->name('pengaturan.')->group(function () {
+            Route::resource('/', PengaturanController::class)->parameters(['' => 'pengaturan']);
+        });
+    });
 });
 
 require __DIR__.'/auth.php';
