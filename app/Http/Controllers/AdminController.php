@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 
 class AdminController extends Controller
 {
@@ -26,7 +27,7 @@ class AdminController extends Controller
             // Simpan role ke session
             $user = Auth::user();
             session(['role' => $user->role]);
-            // Redirect ke dashboard
+            // Redirect to admin dashboard
             return redirect()->route('backoffice.dashboard')->with('success', 'Login berhasil! Selamat datang di Backoffice.');
         }
 

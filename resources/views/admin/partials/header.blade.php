@@ -1,415 +1,266 @@
-<header class="admin-header">
-    @php
-        if(!function_exists('route_exists')){
-            function route_exists($name){
-                return 
-                    class_exists(\Illuminate\Support\Facades\Route::class) && \Illuminate\Support\Facades\Route::has($name);
-            }
-        }
-    @endphp
-    <div class="header-content">
-        <div class="breadcrumb-section">
-            <nav aria-label="breadcrumb">
-                        @php
-                            // Compute breadcrumb based on current admin route
-                            $crumbs = [];
-                            // Home / Dashboard
-                        $crumbs[] = ['label' => 'Dashboard', 'url' => route_exists('backoffice.dashboard') ? route('backoffice.dashboard') : '#'];
-
-                            // Operasional group
-                            if(request()->routeIs('backoffice.pesanan.*') || request()->routeIs('backoffice.produksi.*') || request()->routeIs('backoffice.transaksi.*') || request()->routeIs('backoffice.laporan.*') || request()->routeIs('backoffice.bahanbaku.*')){
-                                $crumbs[] = ['label' => 'Operasional', 'url' => route_exists('backoffice.pesanan.index') ? route('backoffice.pesanan.index') : '#'];
-                            }
-
-                            // Master group
-                            if(request()->routeIs('backoffice.master-produk.*') || request()->routeIs('backoffice.master-user.*') || request()->routeIs('backoffice.pengaturan.*') || request()->routeIs('backoffice.master-bahan.*') ){
-                                $crumbs[] = ['label' => 'Master', 'url' => route_exists('backoffice.master-produk.index') ? route('backoffice.master-produk.index') : '#'];
-                            }
-
-                            // Specific page
-                            if(request()->routeIs('backoffice.pesanan.*')){ $crumbs[] = ['label' => 'Pesanan', 'url' => route_exists('backoffice.pesanan.index') ? route('backoffice.pesanan.index') : '#']; }
-                            if(request()->routeIs('backoffice.bahanbaku.*')){ $crumbs[] = ['label' => 'Bahan Baku', 'url' => route_exists('backoffice.bahanbaku.index') ? route('backoffice.bahanbaku.index') : '#']; }
-                            if(request()->routeIs('backoffice.master-produk.*')){ $crumbs[] = ['label' => 'Produk', 'url' => route_exists('backoffice.master-produk.index') ? route('backoffice.master-produk.index') : '#']; }
-                            if(request()->routeIs('backoffice.produksi.*')){ $crumbs[] = ['label' => 'Produksi', 'url' => route_exists('backoffice.produksi.index') ? route('backoffice.produksi.index') : '#']; }
-                            if(request()->routeIs('backoffice.transaksi.*')){ $crumbs[] = ['label' => 'Penjualan', 'url' => route_exists('backoffice.transaksi.index') ? route('backoffice.transaksi.index') : '#']; }
-                            if(request()->routeIs('backoffice.laporan.*')){ $crumbs[] = ['label' => 'Laporan', 'url' => route_exists('backoffice.laporan.index') ? route('backoffice.laporan.index') : '#']; }
-                            if(request()->routeIs('backoffice.master-user.*')){ $crumbs[] = ['label' => 'User & Hak Akses', 'url' => route_exists('backoffice.master-user.index') ? route('backoffice.master-user.index') : '#']; }
-                            if(request()->routeIs('backoffice.master-bahan.*')){ $crumbs[] = ['label' => 'Bahan Baku', 'url' => route_exists('backoffice.master-bahan.index') ? route('backoffice.master-bahan.index') : '#']; }
-                            if(request()->routeIs('backoffice.pengaturan.*')){ $crumbs[] = ['label' => 'Pengaturan Sistem', 'url' => route_exists('backoffice.pengaturan.index') ? route('backoffice.pengaturan.index') : '#']; }
-
-                            // Helper for page title
-                            $computedTitle = end($crumbs)['label'] ?? ($pageTitle ?? 'Dashboard');
-                        @endphp
-
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="{{ route_exists('backoffice.dashboard') ? route('backoffice.dashboard') : '#' }}" class="text-decoration-none">
-                                    <i class="bx bx-home-alt"></i>
-                                </a>
-                            </li>
-                            @foreach($crumbs as $index => $c)
-                                @if($index === 0)
-                                    {{-- skip dashboard here because we render home icon above --}}
-                                    @continue
-                                @endif
-                                <li class="breadcrumb-item {{ $loop->last ? 'active' : '' }}" {{ $loop->last ? 'aria-current=page' : '' }}>
-                                    @if(!$loop->last && $c['url'] !== '#')
-                                        <a href="{{ $c['url'] }}">{{ $c['label'] }}</a>
-                                    @else
-                                        {{ $c['label'] }}
-                                    @endif
-                                </li>
-                            @endforeach
-                        </ol>
-            </nav>
-            <h1 class="page-title">{{ $pageTitle ?? $computedTitle }}</h1>
-        </div>
-
-        <div class="header-actions">
-            <div class="system-info">
-                <div class="date-time">
-                    <div class="date">
-                        <i class="bx bx-calendar"></i>
-                        <span id="currentDate">{{ now()->format('l, d M Y') }}</span>
-                    </div>
-                    <div class="time">
-                        <i class="bx bx-time"></i>
-                        <span id="currentTime">{{ now()->format('H:i:s') }}</span>
-                    </div>
-                </div>
-                <div class="status">
-                    <i class="bx bx-circle" style="color: #28a745;"></i>
-                    <span>Online</span>
-                </div>
-            </div>
-
-            <div class="notifications">
-                <button class="btn btn-link position-relative" id="notificationBtn">
-                    <i class="bx bx-bell"></i>
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">3</span>
-                </button>
-            </div>
-
-            <div class="user-menu">
-                <div class="dropdown">
-                    <button class="btn btn-link dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="user-avatar">
-                            <span>{{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}</span>
-                        </div>
-                        <div class="user-info d-none d-md-block">
-                            <div class="user-name">{{ Auth::user()->name ?? 'Admin' }}</div>
-                            <div class="user-role">{{ Auth::user()->role ?? 'Administrator' }}</div>
-                        </div>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="#"><i class="bx bx-user"></i> Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bx bx-cog"></i> Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="#"><i class="bx bx-log-out"></i> Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
-
 <style>
-.admin-header {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    border-bottom: 1px solid #e9ecef;
-    padding: 1.5rem 0;
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8fafc;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    padding: 12px 24px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    border-radius: 0 0 16px 16px;
     position: sticky;
     top: 0;
-    z-index: 100;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    backdrop-filter: blur(10px);
-}
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
 
-.header-content {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+  /* Add margin to main content to prevent overlap */
+  .main-content {
+    margin-top: 20px;
+    padding-top: 0;
+  }
 
-.breadcrumb-section {
-    flex: 1;
-}
-
-.breadcrumb {
-    background: transparent;
-    margin-bottom: 0.5rem;
-    padding: 0;
-}
-
-.breadcrumb-item {
+  /* Left - Breadcrumb */
+  .breadcrumb {
     display: flex;
     align-items: center;
-    font-size: 0.875rem;
-}
+    gap: 6px;
+    font-size: 14px;
+    color: #555;
+  }
 
-.breadcrumb-item a {
-    color: #6c757d;
-    text-decoration: none;
-}
+  .breadcrumb span.active {
+    font-weight: 600;
+    color: #2563eb;
+  }
 
-.breadcrumb-item a:hover {
-    color: #495057;
-}
-
-.breadcrumb-item.active {
-    color: #4299e1;
-    font-weight: 700;
-}
-
-.breadcrumb-item a {
-    color: #6c757d;
-    text-decoration: none;
-}
-
-.breadcrumb-item a:hover {
-    color: #495057;
-    text-decoration: underline;
-}
-
-.breadcrumb-item + .breadcrumb-item::before {
-    content: "/";
-    color: #6c757d;
-    padding: 0 0.5rem;
-}
-
-.page-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #2d3748;
-    margin: 0;
-    background: linear-gradient(135deg, #2d3748 0%, #4299e1 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.header-actions {
+  /* Right - Info */
+  .info {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-}
+    gap: 20px;
+    font-size: 14px;
+    color: #555;
+  }
 
-.system-info {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.5rem;
-    font-size: 0.875rem;
-    color: #6c757d;
-}
-
-.date-time, .status {
+  .status {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-}
-
-.date-time {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
-}
-
-.date, .time {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-}
-
-.time {
-    color: #718096;
+    gap: 6px;
+    color: #16a34a;
     font-weight: 500;
-}
+  }
 
-.date-time i, .status i {
-    font-size: 1rem;
-}
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    background: #16a34a;
+    border-radius: 50%;
+  }
 
-.status i {
-    font-size: 0.75rem;
-}
-
-.notifications .btn {
-    color: #718096;
-    padding: 0.5rem;
-    border-radius: 8px;
-    position: relative;
-}
-
-.notifications .btn:hover {
-    background: rgba(66, 153, 225, 0.1);
-    color: #4299e1;
-    transform: scale(1.05);
-    transition: all 0.2s ease;
-}
-
-.notifications .badge {
-    font-size: 0.7rem;
-    padding: 0.25rem 0.5rem;
-    min-width: 18px;
-    height: 18px;
+  /* User */
+  .user {
     display: flex;
     align-items: center;
-    justify-content: center;
-}
+    gap: 8px;
+    cursor: pointer;
+    position: relative;
+  }
 
-.user-menu .btn {
-    color: #718096;
-    padding: 0.5rem;
-    border-radius: 8px;
-    text-decoration: none !important;
-}
-
-.user-menu .btn:hover {
-    background: transparent;
-    color: #718096;
-    transform: none;
-    transition: all 0.2s ease;
-    text-decoration: none !important;
-}
-
-.user-menu .btn * {
-    text-decoration: none !important;
-}
-
-.user-avatar {
+  .user-avatar {
     width: 36px;
     height: 36px;
+    background: #3b82f6;
     border-radius: 50%;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-weight: 600;
-    font-size: 0.875rem;
-    margin-right: 0.75rem;
-}
+    font-weight: bold;
+  }
 
-.user-info {
-    text-align: left;
-}
-
-.user-name {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #2d3748;
-    line-height: 1.2;
-    text-decoration: none !important;
-}
-
-.user-role {
-    font-size: 0.75rem;
-    color: #718096;
-    line-height: 1.2;
-    text-decoration: none !important;
-}
-
-.dropdown-menu {
-    border: none;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    padding: 0.5rem 0;
-    margin-top: 0.5rem;
-}
-
-.dropdown-item {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.875rem;
-    color: #4a5568;
+  .user-info {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    text-decoration: none !important;
-}
+    flex-direction: column;
+    font-size: 13px;
+    line-height: 1.2;
+  }
 
-.dropdown-item:hover {
-    background: #f7fafc;
-    color: #2d3748;
-    text-decoration: none !important;
-}
+  .user-info .role {
+    font-size: 12px;
+    color: #777;
+  }
 
-.dropdown-item.text-danger:hover {
-    background: #fed7d7;
-    color: #e53e3e;
-    text-decoration: none !important;
-}
+  /* Dropdown */
+  .dropdown {
+    display: none;
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+    z-index: 1001;
+  }
 
-.dropdown-divider {
-    margin: 0.5rem 0;
-    border-color: #e2e8f0;
-}
+  .dropdown a {
+    display: block;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: stretch;
+  .dropdown a:hover {
+    background: #f1f5f9;
+  }
+
+  .dropdown a.logout {
+    color: #ef4444;
+    font-weight: 500;
+  }
+
+  .dropdown.show {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    header {
+      padding: 8px 16px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-
-    .breadcrumb-section {
-        text-align: center;
+    
+    .breadcrumb {
+      font-size: 12px;
+      order: 3;
+      width: 100%;
+      margin-top: 8px;
     }
-
-    .header-actions {
-        justify-content: center;
-        flex-wrap: wrap;
+    
+    .info {
+      gap: 12px;
+      font-size: 12px;
     }
-
-    .user-info {
-        display: none;
+    
+    .date-time {
+      display: none;
     }
-}
+  }
 
-@media (max-width: 576px) {
-    .page-title {
-        font-size: 1.5rem;
+  @media (max-width: 480px) {
+    .info .status {
+      display: none;
     }
-
-    .header-actions {
-        gap: 0.5rem;
-    }
-}
+  }
 </style>
 
+<header>
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <span>🏠</span>
+    <span><a href="{{ route('backoffice.dashboard') }}" style="text-decoration: none; color: inherit;">Backoffice</a></span>
+    @if(isset($breadcrumb) && is_array($breadcrumb))
+      @foreach($breadcrumb as $item)
+        <span>/</span>
+        @if($loop->last)
+          <span class="active">{{ $item['title'] }}</span>
+        @else
+          <span>
+            @if(isset($item['url']))
+              <a href="{{ $item['url'] }}" style="text-decoration: none; color: inherit;">{{ $item['title'] }}</a>
+            @else
+              {{ $item['title'] }}
+            @endif
+          </span>
+        @endif
+      @endforeach
+    @else
+      <span>/</span>
+      <span class="active">{{ $pageTitle ?? 'Admin Panel' }}</span>
+    @endif
+  </div>
+
+  <!-- Right Info -->
+  <div class="info">
+    <div class="date-time">
+      <span id="date"></span> | <span id="clock"></span>
+    </div>
+    <div class="status">
+      <div class="status-dot"></div>
+      Online
+    </div>
+    <div class="user" id="userMenu">
+      <div class="user-avatar">{{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}</div>
+      <div class="user-info">
+        <span>{{ auth()->user()->name ?? 'Admin' }}</span>
+        <span class="role">{{ auth()->user()->role ?? 'admin' }}</span>
+      </div>
+
+      <!-- Dropdown -->
+      <div class="dropdown" id="dropdownMenu">
+        <a href="#">👤 Profile</a>
+        <a href="#" class="logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">🚪 Logout</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Logout Form -->
+<form id="logout-form" action="{{ route('backoffice.logout') }}" method="POST" style="display: none;">
+  @csrf
+</form>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    function updateDateTime() {
-        const now = new Date();
+  // Update date & clock
+  function updateDateTime() {
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+    document.getElementById("date").textContent = now.toLocaleDateString('en-US', options);
+    document.getElementById("clock").textContent = now.toLocaleTimeString();
+  }
+  setInterval(updateDateTime, 1000);
+  updateDateTime();
 
-        // Update date
-        const dateOptions = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        };
-        const formattedDate = now.toLocaleDateString('en-US', dateOptions);
-        document.getElementById('currentDate').textContent = formattedDate;
+  // Dropdown toggle
+  const userMenu = document.getElementById("userMenu");
+  const dropdownMenu = document.getElementById("dropdownMenu");
 
-        // Update time
-        const timeOptions = {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        };
-        const formattedTime = now.toLocaleTimeString('en-US', timeOptions);
-        document.getElementById('currentTime').textContent = formattedTime;
+  userMenu.addEventListener("click", () => {
+    dropdownMenu.classList.toggle("show");
+  });
+
+  // Klik di luar dropdown untuk menutup
+  document.addEventListener("click", (e) => {
+    if (!userMenu.contains(e.target)) {
+      dropdownMenu.classList.remove("show");
     }
+  });
 
-    // Update immediately
-    updateDateTime();
-
-    // Update every second
-    setInterval(updateDateTime, 1000);
-});
+  // Enhanced sticky header effect
+  window.addEventListener('scroll', function() {
+    const header = document.querySelector('header');
+    if (window.scrollY > 0) {
+      header.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+      header.style.borderRadius = '0';
+    } else {
+      header.style.boxShadow = '0 2px 6px rgba(0,0,0,0.08)';
+      header.style.borderRadius = '0 0 16px 16px';
+    }
+  });
 </script>

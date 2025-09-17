@@ -82,6 +82,9 @@ Route::middleware(['auth'])->prefix('backoffice')->name('backoffice.')->group(fu
 
         Route::prefix('pengaturan')->name('pengaturan.')->group(function () {
             Route::resource('/', PengaturanController::class)->parameters(['' => 'pengaturan']);
+            // Additional pengaturan actions
+            Route::post('/backup-database', [PengaturanController::class, 'backupDatabase'])->name('backup-database');
+            Route::post('/save-dashboard-goal', [PengaturanController::class, 'saveDashboardGoal'])->name('save-dashboard-goal');
         });
     });
 });

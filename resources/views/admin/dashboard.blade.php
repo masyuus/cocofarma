@@ -1,5 +1,14 @@
 @extends('admin.layouts.app')
 
+@php
+    $pageTitle = 'Dashboard';
+@endphp
+
+@push('styles')
+    <!-- Dashboard-specific CSS (moved from global layout) -->
+    <link href="{{ asset('bolopa/back/css/admin-dashboard.css') }}" rel="stylesheet">
+@endpush
+
 @section('content')
 <!-- Quick Tiles -->
 <div class="row g-3 mb-4">

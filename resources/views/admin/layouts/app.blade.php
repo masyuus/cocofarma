@@ -11,6 +11,10 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=poppins:400,500,600,700&display=swap" rel="stylesheet" />
 
+    <!-- Favicon (tab icon) -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('bolopa/back/images/icon/twemoji--coconut.svg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('bolopa/back/images/icon/twemoji--coconut.svg') }}">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -19,9 +23,6 @@
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
-    <!-- Custom CSS -->
-    <link href="{{ asset('bolopa/back/css/admin-dashboard.css') }}" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
