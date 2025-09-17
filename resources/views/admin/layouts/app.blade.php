@@ -27,6 +27,90 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <style>
+        /* Loading Animation Styles */
+        #page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        #h3 {
+            color: white;
+        }
+
+        #ring {
+            width: 190px;
+            height: 190px;
+            border: 1px solid transparent;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        #ring:nth-child(1) {
+            border-bottom: 8px solid rgb(255, 141, 249);
+            animation: rotate1 2s linear infinite;
+        }
+
+        @keyframes rotate1 {
+            from {
+                transform: rotateX(50deg) rotateZ(110deg);
+            }
+            to {
+                transform: rotateX(50deg) rotateZ(470deg);
+            }
+        }
+
+        #ring:nth-child(2) {
+            border-bottom: 8px solid rgb(255,65,106);
+            animation: rotate2 2s linear infinite;
+        }
+
+        @keyframes rotate2 {
+            from {
+                transform: rotateX(20deg) rotateY(50deg) rotateZ(20deg);
+            }
+            to {
+                transform: rotateX(20deg) rotateY(50deg) rotateZ(380deg);
+            }
+        }
+
+        #ring:nth-child(3) {
+            border-bottom: 8px solid rgb(0,255,255);
+            animation: rotate3 2s linear infinite;
+        }
+
+        @keyframes rotate3 {
+            from {
+                transform: rotateX(40deg) rotateY(130deg) rotateZ(450deg);
+            }
+            to {
+                transform: rotateX(40deg) rotateY(130deg) rotateZ(90deg);
+            }
+        }
+
+        #ring:nth-child(4) {
+            border-bottom: 8px solid rgb(252, 183, 55);
+            animation: rotate4 2s linear infinite;
+        }
+
+        @keyframes rotate4 {
+            from {
+                transform: rotateX(70deg) rotateZ(270deg);
+            }
+            to {
+                transform: rotateX(70deg) rotateZ(630deg);
+            }
+        }
+    </style>
+
     @stack('styles')
 </head>
 <body style="margin: 0; min-height: 100vh; display: flex; flex-direction: column; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc;">
@@ -41,7 +125,15 @@
         <!-- Page Content -->
         <main class="main-content" style="flex: 1; position: relative;">
             <div id="loading-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 10;">
-                <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
+                <div id="page">
+                    <div id="container">
+                        <div id="ring"></div>
+                        <div id="ring"></div>
+                        <div id="ring"></div>
+                        <div id="ring"></div>
+                        <div id="h3">loading</div>
+                    </div>
+                </div>
             </div>
             @yield('content')
         </main>
