@@ -19,12 +19,6 @@
     transition: all 0.3s ease;
   }
 
-  /* Add margin to main content to prevent overlap */
-  .main-content {
-    margin-top: 20px;
-    padding-top: 0;
-  }
-
   /* Left - Breadcrumb */
   .breadcrumb {
     display: flex;

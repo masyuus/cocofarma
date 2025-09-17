@@ -1,6 +1,7 @@
 <style>
     footer {
       margin-top: auto;
+      padding-top: 40px; /* Added top padding for spacing */
       background: #1d1b31;
       color: #f1f5f9;
       text-align: center;

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Produk;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Produk;
 
 class ProdukSeeder extends Seeder
 {
@@ -15,64 +15,67 @@ class ProdukSeeder extends Seeder
     {
         $produks = [
             [
-                'kode_produk' => 'COCO-001',
-                'nama_produk' => 'Cokelat Batang Premium',
-                'deskripsi' => 'Cokelat batang premium dengan kandungan kakao tinggi',
-                'kategori' => 'Cokelat Batang',
-                'harga_jual' => 25000,
-                'satuan' => 'pcs',
-                'stok' => 100,
-                'minimum_stok' => 20,
-                'status' => true,
-            ],
-            [
-                'kode_produk' => 'COCO-002',
-                'nama_produk' => 'Cokelat Bubuk Murni',
-                'deskripsi' => 'Bubuk cokelat murni untuk minuman dan kue',
-                'kategori' => 'Cokelat Bubuk',
-                'harga_jual' => 45000,
-                'satuan' => 'kg',
-                'stok' => 50,
-                'minimum_stok' => 10,
-                'status' => true,
-            ],
-            [
-                'kode_produk' => 'COCO-003',
-                'nama_produk' => 'Cokelat Susu Tablet',
-                'deskripsi' => 'Cokelat susu dalam bentuk tablet siap konsumsi',
-                'kategori' => 'Cokelat Tablet',
-                'harga_jual' => 15000,
-                'satuan' => 'pcs',
-                'stok' => 200,
+                'kode_produk' => 'PRD001',
+                'nama_produk' => 'Arang Batok Kelapa Premium 1kg',
+                'deskripsi' => 'Arang batok kelapa berkualitas tinggi untuk BBQ dan industri',
+                'kategori' => 'Arang Batok',
+                'harga_jual' => 25000.00,
+                'stok' => 150,
                 'minimum_stok' => 50,
-                'status' => true,
+                'satuan' => 'kg',
+                'status' => true
             ],
             [
-                'kode_produk' => 'COCO-004',
-                'nama_produk' => 'Cokelat Truffle',
-                'deskripsi' => 'Cokelat truffle mewah dengan berbagai rasa',
-                'kategori' => 'Cokelat Premium',
-                'harga_jual' => 75000,
-                'satuan' => 'box',
-                'stok' => 30,
-                'minimum_stok' => 5,
-                'status' => true,
+                'kode_produk' => 'PRD002',
+                'nama_produk' => 'Asap Cair Batok Kelapa 500ml',
+                'deskripsi' => 'Asap cair alami dari batok kelapa untuk pengawet makanan',
+                'kategori' => 'Asap Cair',
+                'harga_jual' => 35000.00,
+                'stok' => 80,
+                'minimum_stok' => 25,
+                'satuan' => 'botol',
+                'status' => true
             ],
             [
-                'kode_produk' => 'COCO-005',
-                'nama_produk' => 'Cokelat Praline',
-                'deskripsi' => 'Cokelat praline dengan isian kacang dan karamel',
-                'kategori' => 'Cokelat Premium',
-                'harga_jual' => 65000,
-                'satuan' => 'box',
-                'stok' => 25,
-                'minimum_stok' => 8,
-                'status' => true,
+                'kode_produk' => 'PRD003',
+                'nama_produk' => 'Arang Aktif Batok Kelapa 500g',
+                'deskripsi' => 'Arang aktif untuk filter air dan pengolahan limbah',
+                'kategori' => 'Arang Aktif',
+                'harga_jual' => 45000.00,
+                'stok' => 45,
+                'minimum_stok' => 15,
+                'satuan' => 'kg',
+                'status' => true
             ],
+            [
+                'kode_produk' => 'PRD004',
+                'nama_produk' => 'Asap Cair Batok Kelapa 1L',
+                'deskripsi' => 'Asap cair kemasan besar untuk industri pengolahan makanan',
+                'kategori' => 'Asap Cair',
+                'harga_jual' => 65000.00,
+                'stok' => 120,
+                'minimum_stok' => 40,
+                'satuan' => 'botol',
+                'status' => true
+            ],
+            [
+                'kode_produk' => 'PRD005',
+                'nama_produk' => 'Arang Batok Kelapa BBQ 2kg',
+                'deskripsi' => 'Arang batok kelapa khusus untuk BBQ dengan daya bakar lama',
+                'kategori' => 'Arang Batok',
+                'harga_jual' => 45000.00,
+                'stok' => 95,
+                'minimum_stok' => 30,
+                'satuan' => 'kg',
+                'status' => true
+            ]
         ];
 
         foreach ($produks as $produk) {
-            Produk::create($produk);
+            Produk::updateOrCreate(
+                ['kode_produk' => $produk['kode_produk']],
+                $produk
+            );
         }
     }
 }

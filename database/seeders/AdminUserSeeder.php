@@ -14,19 +14,14 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        // Buat atau update user super admin
+        User::updateOrCreate([
+            'username' => 'lopa123'
+        ], [
             'name' => 'Super Admin',
-            'username' => 'lopa123',
-            'email' => 'admin@cocofarma.com',
+            'email' => 'lopa123@cocofarma.com',
             'password' => Hash::make('lopa123'),
-            ]);
-            User::updateOrCreate([
-                'username' => 'lopa123'
-            ], [
-                'name' => 'Super Admin',
-                'email' => 'lopa123@cocofarma.com',
-                'password' => Hash::make('lopa123'),
-                'role' => 'superadmin',
-            ]);
+            'role' => 'super_admin',
+        ]);
     }
 }

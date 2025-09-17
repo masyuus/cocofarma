@@ -113,7 +113,7 @@
 
     @stack('styles')
 </head>
-<body style="margin: 0; min-height: 100vh; display: flex; flex-direction: column; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc;">
+<body style="margin: 0; min-height: 100vh; display: flex; flex-direction: column; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #e4e9f7;">
     <!-- Sidebar -->
     @include('admin.partials.sidebar')
 
@@ -123,7 +123,7 @@
         @include('admin.partials.header')
 
         <!-- Page Content -->
-        <main class="main-content" style="flex: 1; position: relative;">
+        <main class="main-content" style="flex: 1; position: relative; padding-bottom: 20px;">
             <div id="loading-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 10;">
                 <div id="page">
                     <div id="container">
