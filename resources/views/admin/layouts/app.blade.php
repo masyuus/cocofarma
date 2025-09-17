@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }} - {{ $pageTitle ?? 'Dashboard' }}</title>
+    <title>{{ config('app.name', 'Laravel') }} | {{ $pageTitle ?? 'Backoffice' }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -29,17 +29,17 @@
 
     @stack('styles')
 </head>
-<body>
+<body style="margin: 0; min-height: 100vh; display: flex; flex-direction: column; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc;">
     <!-- Sidebar -->
     @include('admin.partials.sidebar')
 
     <!-- Main Content -->
-    <section class="home-section">
+    <section class="home-section" style="flex: 1; display: flex; flex-direction: column;">
         <!-- Header -->
         @include('admin.partials.header')
 
         <!-- Page Content -->
-        <main class="main-content">
+        <main class="main-content" style="flex: 1;">
             @yield('content')
         </main>
 
@@ -63,12 +63,12 @@
             @if (session('success'))
                 Swal.fire({
                     icon: 'success',
-                    title: '<i class="bi bi-check-circle-fill text-success"></i> Berhasil!',
+                    title: '<i class="fas fa-check-circle text-success"></i> Berhasil!',
                     html: '<strong>{{ session('success') }}</strong>',
                     timer: 3000,
                     timerProgressBar: true,
                     showConfirmButton: true,
-                    confirmButtonText: '<i class="bi bi-check-circle"></i> OK',
+                    confirmButtonText: '<i class="fas fa-check-circle"></i> OK',
                     confirmButtonColor: '#28a745',
                     allowOutsideClick: true,
                     allowEscapeKey: true
@@ -79,9 +79,9 @@
             @if (session('error'))
                 Swal.fire({
                     icon: 'error',
-                    title: '<i class="bi bi-exclamation-triangle-fill text-danger"></i> Error!',
+                    title: '<i class="fas fa-exclamation-triangle text-danger"></i> Error!',
                     html: '<strong>{{ session('error') }}</strong>',
-                    confirmButtonText: '<i class="bi bi-arrow-repeat"></i> OK',
+                    confirmButtonText: '<i class="fas fa-redo"></i> OK',
                     confirmButtonColor: '#dc3545',
                     allowOutsideClick: true
                 });
@@ -91,9 +91,9 @@
             @if (session('info'))
                 Swal.fire({
                     icon: 'info',
-                    title: '<i class="bi bi-info-circle-fill text-info"></i> Info!',
+                    title: '<i class="fas fa-info-circle text-info"></i> Info!',
                     html: '<strong>{{ session('info') }}</strong>',
-                    confirmButtonText: '<i class="bi bi-check-circle"></i> OK',
+                    confirmButtonText: '<i class="fas fa-check-circle"></i> OK',
                     confirmButtonColor: '#17a2b8',
                     allowOutsideClick: true
                 });
@@ -103,9 +103,9 @@
             @if (session('warning'))
                 Swal.fire({
                     icon: 'warning',
-                    title: '<i class="bi bi-exclamation-triangle-fill text-warning"></i> Peringatan!',
+                    title: '<i class="fas fa-exclamation-triangle text-warning"></i> Peringatan!',
                     html: '<strong>{{ session('warning') }}</strong>',
-                    confirmButtonText: '<i class="bi bi-check-circle"></i> OK',
+                    confirmButtonText: '<i class="fas fa-check-circle"></i> OK',
                     confirmButtonColor: '#ffc107',
                     allowOutsideClick: true
                 });

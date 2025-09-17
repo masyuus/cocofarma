@@ -181,7 +181,7 @@
 /* When sidebar is collapsed, move the brand icon next to the hamburger with a small gap */
 .sidebar:not(.open) .logo-details .brand-icon{
   position: absolute;
-  right: 36px; /* leave a small gap from the hamburger (hamburger is at right:0) */
+  right: 30px; /* leave a small gap from the hamburger (hamburger is at right:0) */
   top: 50%;
   transform: translateY(-50%);
   margin-right:0;

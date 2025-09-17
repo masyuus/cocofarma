@@ -247,7 +247,7 @@
                             <small class="text-muted">Ringkasan data dan indikator utama untuk proposal PkM Cocofarma. <a href="#">Pelajari</a></small>
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <button class="btn btn-sm btn-light border" title="Collapse"><i class="bi bi-chevron-up"></i></button>
+                            <button class="btn btn-sm btn-light border" title="Collapse"><i class="fas fa-chevron-up"></i></button>
                             <div class="btn-group" role="group" aria-label="Chart Filters">
                                 <button type="button" class="btn btn-sm btn-outline-secondary" id="filter-day">1D</button>
                                 <button type="button" class="btn btn-sm btn-outline-secondary active" id="filter-week">1W</button>

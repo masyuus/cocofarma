@@ -102,12 +102,12 @@
         @if (session('success'))
             Swal.fire({
                 icon: 'success',
-                title: '<i class="bi bi-check-circle-fill text-success"></i> Login Berhasil!',
+                title: '<i class="fas fa-check-circle text-success"></i> Login Berhasil!',
                 html: '<strong>{{ session('success') }}</strong><br><small>Anda akan diarahkan ke dashboard dalam <span id="countdown">3</span> detik...</small>',
                 timer: 3000,
                 timerProgressBar: true,
                 showConfirmButton: true,
-                confirmButtonText: '<i class="bi bi-check-circle"></i> OK, Lanjutkan',
+                confirmButtonText: '<i class="fas fa-check-circle"></i> OK, Lanjutkan',
                 confirmButtonColor: '#28a745',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
@@ -139,9 +139,9 @@
         @if (session('error'))
             Swal.fire({
                 icon: 'error',
-                title: '<i class="bi bi-exclamation-triangle-fill text-danger"></i> Login Gagal!',
+                title: '<i class="fas fa-exclamation-triangle text-danger"></i> Login Gagal!',
                 html: '<strong>{{ session('error') }}</strong><br><small>Silakan periksa kembali username dan password Anda.</small>',
-                confirmButtonText: '<i class="bi bi-arrow-repeat"></i> Coba Lagi',
+                confirmButtonText: '<i class="fas fa-redo"></i> Coba Lagi',
                 confirmButtonColor: '#dc3545',
                 allowOutsideClick: false
             });
