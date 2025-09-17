@@ -33,7 +33,7 @@ Route::post('/mimin', [AdminController::class, 'login']);
 Route::post('/backoffice/logout', [AdminController::class, 'logout'])->name('backoffice.logout');
 
 // Backoffice routes with role-based access
-Route::middleware(['auth'])->prefix('backoffice')->name('backoffice.')->group(function () {
+Route::middleware(['admin.auth'])->prefix('backoffice')->name('backoffice.')->group(function () {
     
     // Dashboard (accessible by both super_admin and admin)
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');

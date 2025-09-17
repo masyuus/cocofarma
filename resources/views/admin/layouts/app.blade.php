@@ -39,7 +39,10 @@
         @include('admin.partials.header')
 
         <!-- Page Content -->
-        <main class="main-content" style="flex: 1;">
+        <main class="main-content" style="flex: 1; position: relative;">
+            <div id="loading-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 10;">
+                <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
+            </div>
             @yield('content')
         </main>
 
@@ -110,6 +113,17 @@
                     allowOutsideClick: true
                 });
             @endif
+        });
+
+        // Hide loading overlay after page load with minimum duration
+        window.addEventListener('load', function() {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            if (loadingOverlay) {
+                // Minimum loading duration of 2 seconds
+                setTimeout(function() {
+                    loadingOverlay.style.display = 'none';
+                }, 1500);
+            }
         });
     </script>
 
