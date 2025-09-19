@@ -112,12 +112,13 @@
     }
 
     .form-group input,
-    .form-group select {
+    .form-group select,
+    .form-group textarea {
         width: 100%;
-        padding: 12px 15px;
+        padding: 12px 16px;
         border: 2px solid var(--light-gray);
         border-radius: var(--border-radius);
-        font-size: 1rem;
+        font-size: 0.95rem;
         transition: var(--transition);
         background: white;
     }
@@ -301,88 +302,128 @@
             </a>
         </div>
 
-        <form action="{{ route('backoffice.bahanbaku.update', $bahanBaku->id) }}" method="POST">
+        <form class="form-container" action="{{ route('backoffice.bahanbaku.update', $bahanBaku->id) }}" method="POST">
             @csrf
             @method('PUT')
 
-        <div class="form-row">
-            <div class="form-group">
-                <label for="kode_bahan" class="required">Kode Bahan</label>
-                <input type="text" id="kode_bahan" name="kode_bahan" value="{{ old('kode_bahan', $bahanBaku->kode_bahan) }}" readonly required style="background-color: #f8f9fa; cursor: not-allowed;">
-                <small class="text-muted">Format: BB + YYMMDD + Nama (4 karakter) - Kode bahan tidak dapat diubah</small>
-                @error('kode_bahan')
-                    <div class="text-danger" data-server-error="true">{{ $message }}</div>
-                @enderror
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="kode_bahan">Kode Bahan <span style="color: var(--danger);">*</span></label>
+                    <input type="text" id="kode_bahan" name="kode_bahan" value="{{ old('kode_bahan', $bahanBaku->kode_bahan) }}" readonly required style="background-color: #f8f9fa; cursor: not-allowed;">
+                    <small class="text-muted">Kode bahan tidak dapat diubah setelah dibuat</small>
+                    @error('kode_bahan')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="nama_bahan">Nama Bahan <span style="color: var(--danger);">*</span></label>
+                    <input type="text" id="nama_bahan" name="nama_bahan" value="{{ old('nama_bahan', $bahanBaku->nama_bahan) }}" required>
+                    @error('nama_bahan')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="master_bahan_id">Master Bahan <span style="color: var(--danger);">*</span></label>
+                    <select id="master_bahan_id" name="master_bahan_id" required>
+                        <option value="">Pilih Master Bahan</option>
+                        @if(isset($masterBahans))
+                            @foreach($masterBahans as $master)
+                                <option value="{{ $master->id }}" {{ old('master_bahan_id', $bahanBaku->master_bahan_id) == $master->id ? 'selected' : '' }}>
+                                    {{ $master->nama_bahan }} ({{ $master->satuan }})
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
+                    @error('master_bahan_id')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="satuan">Satuan <span style="color: var(--danger);">*</span></label>
+                    <input type="text" id="satuan" name="satuan" value="{{ old('satuan', $bahanBaku->satuan) }}" placeholder="Contoh: kg, liter, pcs" required>
+                    @error('satuan')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="harga_per_satuan">Harga per Satuan <span style="color: var(--danger);">*</span></label>
+                    <input type="number" id="harga_per_satuan" name="harga_per_satuan" value="{{ old('harga_per_satuan', $bahanBaku->harga_per_satuan) }}" min="0" step="0.01" required>
+                    @error('harga_per_satuan')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="stok">Stok <span style="color: var(--danger);">*</span></label>
+                    <input type="number" id="stok" name="stok" value="{{ old('stok', $bahanBaku->stok) }}" min="0" step="0.01" required>
+                    @error('stok')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tanggal_masuk">Tanggal Masuk <span style="color: var(--danger);">*</span></label>
+                    <input type="date" id="tanggal_masuk" name="tanggal_masuk" value="{{ old('tanggal_masuk', $bahanBaku->tanggal_masuk ? $bahanBaku->tanggal_masuk->format('Y-m-d') : '') }}" required>
+                    @error('tanggal_masuk')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="tanggal_kadaluarsa">Tanggal Kadaluarsa</label>
+                    <input type="date" id="tanggal_kadaluarsa" name="tanggal_kadaluarsa" value="{{ old('tanggal_kadaluarsa', $bahanBaku->tanggal_kadaluarsa ? $bahanBaku->tanggal_kadaluarsa->format('Y-m-d') : '') }}">
+                    @error('tanggal_kadaluarsa')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="status">Status <span style="color: var(--danger);">*</span></label>
+                    <select id="status" name="status" required>
+                        <option value="aktif" {{ old('status', $bahanBaku->status) == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                        <option value="nonaktif" {{ old('status', $bahanBaku->status) == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                    </select>
+                    @error('status')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="created_at">Tanggal Dibuat</label>
+                    <input type="text" value="{{ $bahanBaku->created_at ? $bahanBaku->created_at->format('d/m/Y H:i') : '-' }}" readonly style="background-color: #f8f9fa; cursor: not-allowed;">
+                    <small class="text-muted">Informasi hanya untuk referensi</small>
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="nama_bahan" class="required">Nama Bahan</label>
-                <input type="text" id="nama_bahan" name="nama_bahan" value="{{ old('nama_bahan', $bahanBaku->nama_bahan) }}" required>
-                @error('nama_bahan')
-                    <div class="text-danger" data-server-error="true">{{ $message }}</div>
-                @enderror
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="kategori">Kategori</label>
-                <select id="kategori" name="kategori">
-                    <option value="operational" {{ old('kategori', $bahanBaku->kategori) == 'operational' ? 'selected' : '' }}>Operational</option>
-                    <option value="master" {{ old('kategori', $bahanBaku->kategori) == 'master' ? 'selected' : '' }}>Master</option>
-                </select>
-                @error('kategori')
-                    <div class="text-danger" data-server-error="true">{{ $message }}</div>
+                <label for="deskripsi">Deskripsi</label>
+                <textarea id="deskripsi" name="deskripsi" rows="4" placeholder="Deskripsi bahan baku (opsional)">{{ old('deskripsi', $bahanBaku->deskripsi) }}</textarea>
+                @error('deskripsi')
+                    <span class="text-danger" data-server-error="true">{{ $message }}</span>
                 @enderror
             </div>
 
-            <div class="form-group">
-                <label for="satuan" class="required">Satuan</label>
-                <input type="text" id="satuan" name="satuan" value="{{ old('satuan', $bahanBaku->satuan) }}" required>
-                @error('satuan')
-                    <div class="text-danger" data-server-error="true">{{ $message }}</div>
-                @enderror
+            <div class="form-actions">
+                <a href="{{ route('backoffice.bahanbaku.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Batal
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Update Bahan Baku
+                </button>
             </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="stok">Stok</label>
-                <input type="number" id="stok" name="stok" value="{{ old('stok', $bahanBaku->stok ?? 0) }}" min="0">
-                @error('stok')
-                    <div class="text-danger" data-server-error="true">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="status">Status</label>
-                <select id="status" name="status">
-                    <option value="1" {{ old('status', $bahanBaku->status) == 1 ? 'selected' : '' }}>Aktif</option>
-                    <option value="0" {{ old('status', $bahanBaku->status) == 0 ? 'selected' : '' }}>Nonaktif</option>
-                </select>
-                @error('status')
-                    <div class="text-danger" data-server-error="true">{{ $message }}</div>
-                @enderror
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="deskripsi">Deskripsi</label>
-            <textarea id="deskripsi" name="deskripsi" rows="4" style="width: 100%; padding: 12px 15px; border: 2px solid var(--light-gray); border-radius: var(--border-radius); font-size: 1rem; transition: var(--transition); background: white; resize: vertical;" placeholder="Deskripsi bahan baku (opsional)">{{ old('deskripsi', $bahanBaku->deskripsi ?? '') }}</textarea>
-            @error('deskripsi')
-                <div class="text-danger" data-server-error="true">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="form-actions">
-            <a href="{{ route('backoffice.bahanbaku.index') }}" class="btn btn-secondary">
-                <i class="fas fa-times"></i> Batal
-            </a>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Simpan Perubahan
-            </button>
-        </div>
-    </form>
+        </form>
     </div>
 </div>
 
@@ -410,7 +451,7 @@ document.getElementById('kode_bahan').addEventListener('contextmenu', function(e
 
 // Form validation and submission with enhanced visual feedback
 document.querySelector('form').addEventListener('submit', function(e) {
-    const requiredFields = ['nama_bahan', 'satuan'];
+    const requiredFields = ['master_bahan_id', 'nama_bahan', 'satuan'];
     let isValid = true;
 
     // Reset previous error states

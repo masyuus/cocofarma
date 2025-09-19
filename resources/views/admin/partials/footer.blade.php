@@ -25,5 +25,5 @@
     }
 </style>
 <footer>
-    <p>© 2025 Cocofarma | Dibuat dengan ❤️ oleh Tim Developer</p>
+    <p>© 2025 Cocofarma | Dibuat dengan ❤️ oleh Tim Developer D3MI</p>
 </footer>
