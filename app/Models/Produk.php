@@ -9,39 +9,49 @@ class Produk extends Model
 {
     use HasFactory;
 
+    protected $table = 'produks';
+
     protected $fillable = [
         'kode_produk',
-        'nama_produk', 
-        'deskripsi',
-        'kategori',
-        'harga_jual',
+        'nama_produk',
         'satuan',
-        'stok',
-        'minimum_stok',
-        'foto',
+        'harga_jual',
+        'deskripsi',
         'status'
     ];
 
     protected $casts = [
         'harga_jual' => 'decimal:2',
-        'status' => 'boolean',
+        'status' => 'string'
     ];
 
     // Relasi dengan PesananItem
     public function pesananItems()
     {
-        return $this->hasMany(PesananItem::class);
+        return $this->hasMany(PesananItem::class, 'produk_id');
     }
 
     // Relasi dengan TransaksiItem (penjualan)
     public function transaksiItems()
     {
-        return $this->hasMany(TransaksiItem::class);
+        return $this->hasMany(TransaksiItem::class, 'produk_id');
     }
 
     // Relasi dengan Produksi
-    public function produksi()
+    public function produksis()
     {
-        return $this->hasMany(Produksi::class);
+        return $this->hasMany(Produksi::class, 'produk_id');
+    }
+
+    // Accessor untuk status produk
+    public function getStatusLabelAttribute()
+    {
+        return $this->status === 'aktif' ? 'Aktif' : 'Nonaktif';
+    }
+
+    // Scope untuk produk aktif
+    public function scopeAktif($query)
+    {
+        return $query->where('status', 'aktif');
     }
 }

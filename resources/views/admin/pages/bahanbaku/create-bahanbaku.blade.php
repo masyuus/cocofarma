@@ -1,12 +1,13 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Tambah Bahan Baku')
+@section('title', 'Tambah Bahan Baku - Cocofarma')
 
 @section('content')
 <style>
     :root {
         --primary: #4361ee;
         --secondary: #3f37c9;
+        --primary-hover: #3a4fd8;
         --success: #4cc9f0;
         --info: #4895ef;
         --warning: #f72585;
@@ -20,33 +21,132 @@
         --transition: all 0.3s ease;
     }
 
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    html, body {
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
     .container {
         max-width: 800px;
-        margin: 0 auto;
+        margin: 40px auto 60px auto;
         background: white;
         border-radius: var(--border-radius);
         box-shadow: var(--box-shadow);
-        padding: 32px;
+        padding: 30px;
+        overflow: hidden;
+        min-height: calc(100vh - 200px);
+        position: relative;
+        animation: fadeInUp 0.6s ease-out;
     }
 
-    h1 {
+    /* Content wrapper untuk spacing yang lebih baik */
+    .content-wrapper {
+        padding: 20px 0;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var(--light-gray);
+    }
+
+    .page-header h1 {
         color: var(--dark);
         font-size: 1.8rem;
         font-weight: 600;
-        margin-bottom: 24px;
+        margin: 0;
         display: flex;
         align-items: center;
         gap: 10px;
     }
 
+    .page-header h1 i {
+        color: var(--primary);
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-weight: 500;
+        transition: var(--transition);
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: var(--gray);
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-1px);
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+    }
+
+    .form-container {
+        animation: slideInLeft 0.5s ease-out 0.2s both;
+    }
+
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 25px;
+        animation: slideInLeft 0.5s ease-out 0.3s both;
+    }
+
+    .form-group:nth-child(2) {
+        animation-delay: 0.4s;
+    }
+
+    .form-group:nth-child(3) {
+        animation-delay: 0.5s;
+    }
+
+    .form-group:nth-child(4) {
+        animation-delay: 0.6s;
+    }
+
+    .form-group:nth-child(5) {
+        animation-delay: 0.7s;
+    }
+
+    .form-group:nth-child(6) {
+        animation-delay: 0.8s;
+    }
+
+    .form-group:nth-child(7) {
+        animation-delay: 0.9s;
     }
 
     .form-group label {
         display: block;
         margin-bottom: 8px;
-        font-weight: 500;
+        font-weight: 600;
         color: var(--dark);
         font-size: 0.95rem;
     }
@@ -56,7 +156,7 @@
     .form-group textarea {
         width: 100%;
         padding: 12px 16px;
-        border: 1px solid var(--light-gray);
+        border: 2px solid var(--light-gray);
         border-radius: var(--border-radius);
         font-size: 0.95rem;
         transition: var(--transition);
@@ -72,8 +172,8 @@
     }
 
     .form-group textarea {
-        min-height: 120px;
         resize: vertical;
+        min-height: 80px;
     }
 
     .form-row {
@@ -82,160 +182,492 @@
         gap: 20px;
     }
 
-    @media (max-width: 768px) {
-        .form-row {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .btn {
-        padding: 12px 24px;
-        border: none;
-        border-radius: var(--border-radius);
-        cursor: pointer;
-        font-weight: 500;
-        transition: var(--transition);
-        font-size: 0.95rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-    }
-
-    .btn-primary {
-        background: var(--primary);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: var(--secondary);
-        transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-        background: var(--gray);
-        color: white;
-    }
-
-    .btn-secondary:hover {
-        background: #5a6268;
-        transform: translateY(-1px);
+    .form-row .form-group {
+        margin-bottom: 0;
     }
 
     .form-actions {
         display: flex;
         justify-content: flex-end;
-        gap: 12px;
-        margin-top: 32px;
-        padding-top: 24px;
-        border-top: 1px solid var(--light-gray);
+        gap: 15px;
+        margin-top: 40px;
+        padding-top: 25px;
+        border-top: 2px solid var(--light-gray);
+        animation: slideInLeft 0.5s ease-out 1s both;
     }
 
-    .error-message {
+    .text-danger {
         color: var(--danger);
         font-size: 0.85rem;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .error-border {
+        border-color: var(--danger) !important;
+        box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15) !important;
+    }
+
+    /* Alert styles */
+    .alert {
+        padding: 15px 20px;
+        border-radius: var(--border-radius);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+    }
+
+    .alert-success {
+        background: rgba(76, 201, 240, 0.1);
+        color: var(--success);
+        border: 1px solid rgba(76, 201, 240, 0.3);
+    }
+
+    .alert-danger {
+        background: rgba(230, 57, 70, 0.1);
+        color: var(--danger);
+        border: 1px solid rgba(230, 57, 70, 0.3);
+    }
+
+    .alert i {
+        font-size: 1.1rem;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .container {
+            margin: 20px auto 40px auto;
+            padding: 20px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+    }
+
+    .form-group input[readonly] {
+        background-color: #f8f9fa !important;
+        cursor: not-allowed !important;
+        opacity: 0.8;
+        border-color: #dee2e6 !important;
+    }
+
+    .form-group input[readonly]:focus {
+        border-color: #dee2e6 !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+    .text-muted {
+        color: #6c757d;
+        font-size: 0.875rem;
         margin-top: 4px;
+        display: block;
     }
 </style>
 
 <div class="container">
-    <h1><i class="fas fa-plus"></i> Tambah Bahan Baku Oprasional</h1>
-
-    <form action="{{ route('backoffice.bahanbaku.store') }}" method="POST">
-        @csrf
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="kode_bahan">Kode Bahan *</label>
-                <input type="text" id="kode_bahan" name="kode_bahan" value="{{ old('kode_bahan') }}" required>
-                @error('kode_bahan')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="nama_bahan">Nama Bahan *</label>
-                <input type="text" id="nama_bahan" name="nama_bahan" value="{{ old('nama_bahan') }}" required>
-                @error('nama_bahan')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="kategori">Kategori</label>
-                <select id="kategori" name="kategori">
-                    <option value="">Pilih Kategori</option>
-                    <option value="Oprasional" {{ old('kategori') == 'Oprasional' ? 'selected' : '' }}>Oprasional</option>
-                    <option value="Master" {{ old('kategori') == 'Master' ? 'selected' : '' }}>Master</option>
-                </select>
-                @error('kategori')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="satuan">Satuan *</label>
-                <select id="satuan" name="satuan" required>
-                    <option value="">Pilih Satuan</option>
-                    <option value="kg" {{ old('satuan') == 'kg' ? 'selected' : '' }}>Kilogram (kg)</option>
-                    <option value="liter" {{ old('satuan') == 'liter' ? 'selected' : '' }}>Liter</option>
-                    <option value="pcs" {{ old('satuan') == 'pcs' ? 'selected' : '' }}>Pieces (pcs)</option>
-                    <option value="box" {{ old('satuan') == 'box' ? 'selected' : '' }}>Box</option>
-                    <option value="pack" {{ old('satuan') == 'pack' ? 'selected' : '' }}>Pack</option>
-                </select>
-                @error('satuan')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="stok">Stok Awal</label>
-                <input type="number" id="stok" name="stok" value="{{ old('stok', 0) }}" min="0">
-                @error('stok')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="minimum_stok">Stok Minimum</label>
-                <input type="number" id="minimum_stok" name="minimum_stok" value="{{ old('minimum_stok', 0) }}" min="0" step="0.01">
-                @error('minimum_stok')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="status">Status</label>
-                <select id="status" name="status">
-                    <option value="1" {{ old('status', 1) == 1 ? 'selected' : '' }}>Aktif</option>
-                    <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Nonaktif</option>
-                </select>
-                @error('status')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="deskripsi">Deskripsi</label>
-            <textarea id="deskripsi" name="deskripsi">{{ old('deskripsi') }}</textarea>
-            @error('deskripsi')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="form-actions">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h1><i class="fas fa-plus"></i> Tambah Bahan Baku</h1>
             <a href="{{ route('backoffice.bahanbaku.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Simpan
-            </button>
         </div>
-    </form>
+
+        @if(session('success'))
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <ul style="margin: 0; padding-left: 20px;">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form class="form-container" action="{{ route('backoffice.bahanbaku.store') }}" method="POST">
+            @csrf
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="kode_bahan">Kode Bahan <span style="color: var(--danger);">*</span></label>
+                    <input type="text" id="kode_bahan" name="kode_bahan" value="{{ old('kode_bahan') }}" readonly required style="background-color: #f8f9fa; cursor: not-allowed;">
+                    <small class="text-muted">Format: BB + YYMMDD + Nama (4 karakter) - Kode akan terisi otomatis berdasarkan nama bahan</small>
+                    @error('kode_bahan')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="nama_bahan">Nama Bahan <span style="color: var(--danger);">*</span></label>
+                    <input type="text" id="nama_bahan" name="nama_bahan" value="{{ old('nama_bahan') }}" required>
+                    @error('nama_bahan')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="master_bahan_id">Master Bahan <span style="color: var(--danger);">*</span></label>
+                    <select id="master_bahan_id" name="master_bahan_id" required>
+                        <option value="">Pilih Master Bahan</option>
+                        @if(isset($masterBahans))
+                            @foreach($masterBahans as $master)
+                                <option value="{{ $master->id }}" {{ old('master_bahan_id') == $master->id ? 'selected' : '' }}>
+                                    {{ $master->nama_bahan }} ({{ $master->satuan }})
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
+                    @error('master_bahan_id')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="satuan">Satuan <span style="color: var(--danger);">*</span></label>
+                    <input type="text" id="satuan" name="satuan" value="{{ old('satuan') }}" placeholder="Contoh: kg, liter, pcs" required>
+                    @error('satuan')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="harga_per_satuan">Harga per Satuan <span style="color: var(--danger);">*</span></label>
+                    <input type="number" id="harga_per_satuan" name="harga_per_satuan" value="{{ old('harga_per_satuan') }}" min="0" step="0.01" required>
+                    @error('harga_per_satuan')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="stok">Stok Awal <span style="color: var(--danger);">*</span></label>
+                    <input type="number" id="stok" name="stok" value="{{ old('stok') }}" min="0" step="0.01" required>
+                    @error('stok')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tanggal_masuk">Tanggal Masuk <span style="color: var(--danger);">*</span></label>
+                    <input type="date" id="tanggal_masuk" name="tanggal_masuk" value="{{ old('tanggal_masuk', date('Y-m-d')) }}" required>
+                    @error('tanggal_masuk')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="tanggal_kadaluarsa">Tanggal Kadaluarsa</label>
+                    <input type="date" id="tanggal_kadaluarsa" name="tanggal_kadaluarsa" value="{{ old('tanggal_kadaluarsa') }}">
+                    @error('tanggal_kadaluarsa')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="status">Status <span style="color: var(--danger);">*</span></label>
+                    <select id="status" name="status" required>
+                        <option value="aktif" {{ old('status', 'aktif') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                        <option value="nonaktif" {{ old('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                    </select>
+                    @error('status')
+                        <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <!-- Empty column for layout -->
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="deskripsi">Deskripsi</label>
+                <textarea id="deskripsi" name="deskripsi" rows="4" placeholder="Deskripsi bahan baku (opsional)">{{ old('deskripsi') }}</textarea>
+                @error('deskripsi')
+                    <span class="text-danger" data-server-error="true">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ route('backoffice.bahanbaku.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Batal
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Simpan Bahan Baku
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script>
+// Enhanced auto-generate kode bahan with date (readonly field)
+document.getElementById('nama_bahan').addEventListener('input', function() {
+    const kodeInput = document.getElementById('kode_bahan');
+    const namaValue = this.value.trim();
+
+    if (namaValue.length > 0) {
+        // Get current date in YYMMDD format
+        const today = new Date();
+        const year = today.getFullYear().toString().slice(-2); // Last 2 digits of year
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Month with leading zero
+        const day = String(today.getDate()).padStart(2, '0'); // Day with leading zero
+        const dateString = year + month + day; // YYMMDD format
+
+        // Clean the name and take first 4 characters (since we have date, shorter name is better)
+        const cleanName = namaValue.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 4);
+        if (cleanName.length > 0) {
+            kodeInput.value = 'BB' + dateString + cleanName;
+        } else {
+            kodeInput.value = 'BB' + dateString;
+        }
+    } else {
+        kodeInput.value = '';
+    }
+});
+
+// Prevent manual editing of kode field
+document.getElementById('kode_bahan').addEventListener('keydown', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+document.getElementById('kode_bahan').addEventListener('paste', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+document.getElementById('kode_bahan').addEventListener('cut', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+document.getElementById('kode_bahan').addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+// Auto-generate kode on page load if nama_bahan has value
+document.addEventListener('DOMContentLoaded', function() {
+    const namaInput = document.getElementById('nama_bahan');
+    const kodeInput = document.getElementById('kode_bahan');
+
+    if (namaInput.value.trim()) {
+        const namaValue = namaInput.value.trim();
+        // Get current date in YYMMDD format
+        const today = new Date();
+        const year = today.getFullYear().toString().slice(-2);
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const dateString = year + month + day;
+
+        // Clean the name and take first 4 characters
+        const cleanName = namaValue.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 4);
+        if (cleanName.length > 0) {
+            kodeInput.value = 'BB' + dateString + cleanName;
+        } else {
+            kodeInput.value = 'BB' + dateString;
+        }
+    }
+});
+
+// Form validation and submission with enhanced visual feedback
+document.querySelector('form').addEventListener('submit', function(e) {
+    const requiredFields = ['nama_bahan', 'satuan'];
+    let isValid = true;
+
+    // Reset previous error states
+    document.querySelectorAll('.form-group input, .form-group select').forEach(element => {
+        element.classList.remove('error-border');
+    });
+    document.querySelectorAll('.text-danger').forEach(error => {
+        if (!error.hasAttribute('data-server-error')) {
+            error.remove();
+        }
+    });
+
+    requiredFields.forEach(field => {
+        const element = document.getElementById(field);
+        if (!element.value.trim()) {
+            element.classList.add('error-border');
+            element.style.borderColor = 'var(--danger)';
+            element.style.boxShadow = '0 0 0 3px rgba(230, 57, 70, 0.15)';
+
+            // Add error message if not exists
+            if (!element.parentNode.querySelector('.text-danger[data-client-error]')) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'text-danger';
+                errorDiv.setAttribute('data-client-error', 'true');
+                errorDiv.textContent = 'Field ini wajib diisi';
+                element.parentNode.appendChild(errorDiv);
+            }
+
+            isValid = false;
+        } else {
+            element.classList.remove('error-border');
+            element.style.borderColor = 'var(--light-gray)';
+            element.style.boxShadow = '0 0 0 3px rgba(67, 97, 238, 0.15)';
+
+            // Remove client error message
+            const clientError = element.parentNode.querySelector('.text-danger[data-client-error]');
+            if (clientError) {
+                clientError.remove();
+            }
+        }
+    });
+
+    // Special validation for kode_bahan (should always be filled due to auto-generate)
+    const kodeInput = document.getElementById('kode_bahan');
+    if (!kodeInput.value.trim()) {
+        // If kode is empty, try to generate it from nama_bahan with date
+        const namaInput = document.getElementById('nama_bahan');
+        if (namaInput.value.trim()) {
+            const namaValue = namaInput.value.trim();
+            // Get current date in YYMMDD format
+            const today = new Date();
+            const year = today.getFullYear().toString().slice(-2);
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const dateString = year + month + day;
+
+            // Clean the name and take first 4 characters
+            const cleanName = namaValue.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 4);
+            if (cleanName.length > 0) {
+                kodeInput.value = 'BB' + dateString + cleanName;
+            } else {
+                kodeInput.value = 'BB' + dateString;
+            }
+        }
+    }
+
+    if (!isValid) {
+        e.preventDefault();
+
+        // Scroll to first error
+        const firstError = document.querySelector('.error-border');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+        }
+
+        // Show alert with animation
+        const alertDiv = document.createElement('div');
+        alertDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--danger);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+        `;
+        alertDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Mohon lengkapi semua field yang wajib diisi!';
+
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.style.animation = 'slideOutRight 0.3s ease-in';
+            setTimeout(() => alertDiv.remove(), 300);
+        }, 3000);
+
+        return; // Stop execution if validation fails
+    }
+
+    // Add loading state if validation passes
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
+    submitBtn.style.opacity = '0.7';
+
+    // Re-enable after 3 seconds (in case of slow response)
+    setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        submitBtn.style.opacity = '1';
+    }, 3000);
+});
+
+// Add slide animations for alerts
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+
 @endsection

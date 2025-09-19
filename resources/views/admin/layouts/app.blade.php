@@ -27,6 +27,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
     <style>
         /* Loading Animation Styles */
         #page {
@@ -124,7 +127,7 @@
 
         <!-- Page Content -->
         <main class="main-content" style="flex: 1; position: relative; padding-bottom: 20px;">
-            <div id="loading-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: flex; justify-content: center; align-items: center; z-index: 10;">
+            <div id="loading-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(2px);">
                 <div id="page">
                     <div id="container">
                         <div id="ring"></div>
@@ -207,14 +210,25 @@
             @endif
         });
 
-        // Hide loading overlay after page load with minimum duration
+        // Control loading overlay - only show on first visit
         window.addEventListener('load', function() {
             const loadingOverlay = document.getElementById('loading-overlay');
             if (loadingOverlay) {
-                // Minimum loading duration of 2 seconds
-                setTimeout(function() {
+                // Check if this is the first visit to this page
+                const pageKey = window.location.pathname;
+                const hasVisited = localStorage.getItem('visited_' + pageKey);
+
+                if (hasVisited) {
+                    // Not first visit - hide loading immediately
                     loadingOverlay.style.display = 'none';
-                }, 1500);
+                } else {
+                    // First visit - show loading for minimum duration then hide
+                    setTimeout(function() {
+                        loadingOverlay.style.display = 'none';
+                        // Mark as visited
+                        localStorage.setItem('visited_' + pageKey, 'true');
+                    }, 1500);
+                }
             }
         });
     </script>

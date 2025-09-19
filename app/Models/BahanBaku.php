@@ -6,58 +6,98 @@ use Illuminate\Database\Eloquent\Model;
 
 class BahanBaku extends Model
 {
-    protected $table = 'bahan_bakus';
-    
+    protected $table = 'bahan_baku';
+
     protected $fillable = [
+        'master_bahan_id',
         'kode_bahan',
         'nama_bahan',
-        'deskripsi',
-        'kategori',
         'satuan',
+        'harga_per_satuan',
         'stok',
-        'minimum_stok',
-        'harga_beli_terakhir',
-        'supplier',
+        'tanggal_masuk',
         'tanggal_kadaluarsa',
         'status'
     ];
-    
+
     protected $casts = [
-        'status' => 'boolean',
-        'minimum_stok' => 'decimal:2',
-        'harga_beli_terakhir' => 'decimal:2',
-        'tanggal_kadaluarsa' => 'date'
+        'master_bahan_id' => 'integer',
+        'harga_per_satuan' => 'decimal:2',
+        'stok' => 'decimal:2',
+        'tanggal_masuk' => 'date',
+        'tanggal_kadaluarsa' => 'date',
+        'status' => 'string'
     ];
-    
-    // Relationship dengan stok bahan baku
+
+    // Relationship dengan master bahan baku
+    public function masterBahan()
+    {
+        return $this->belongsTo(MasterBahanBaku::class, 'master_bahan_id');
+    }
+
+    // Relationship dengan stok bahan baku (untuk FIFO tracking)
     public function stokBahanBaku()
     {
         return $this->hasMany(StokBahanBaku::class, 'bahan_baku_id');
     }
-    
-    // Relationship dengan stok tersedia
-    public function stokTersedia()
+
+    // Relationship dengan produksi bahan
+    public function produksiBahans()
     {
-        return $this->hasMany(StokBahanBaku::class, 'bahan_baku_id')->where('tersedia', true);
+        return $this->hasMany(ProduksiBahan::class, 'bahan_baku_id');
     }
-    
+
+    // Relationship dengan transaksi items
+    public function transaksiItems()
+    {
+        return $this->hasMany(TransaksiItem::class, 'bahan_baku_id');
+    }
+
     // Accessor untuk total stok tersedia
     public function getTotalStokAttribute()
     {
-        return $this->stokTersedia->sum('quantity');
+        return $this->stok;
     }
-    
+
     // Accessor untuk status stok
     public function getStatusStokAttribute()
     {
         $totalStok = $this->stok;
-        
-        if ($totalStok <= $this->minimum_stok) {
+
+        // Default minimum stok dari master bahan atau 10 jika tidak ada
+        $minimumStok = $this->masterBahan ? 10 : 10;
+
+        if ($totalStok <= $minimumStok) {
             return 'RENDAH';
-        } elseif ($totalStok <= ($this->minimum_stok * 1.5)) {
+        } elseif ($totalStok <= ($minimumStok * 1.5)) {
             return 'SEDANG';
         } else {
             return 'AMAN';
         }
+    }
+
+    // Accessor untuk cek apakah bahan baku expired
+    public function getIsExpiredAttribute()
+    {
+        if (!$this->tanggal_kadaluarsa) {
+            return false;
+        }
+
+        return $this->tanggal_kadaluarsa < now()->toDateString();
+    }
+
+    // Scope untuk bahan baku aktif
+    public function scopeAktif($query)
+    {
+        return $query->where('status', 'aktif');
+    }
+
+    // Scope untuk bahan baku yang belum expired
+    public function scopeBelumExpired($query)
+    {
+        return $query->where(function($q) {
+            $q->whereNull('tanggal_kadaluarsa')
+              ->orWhere('tanggal_kadaluarsa', '>=', now()->toDateString());
+        });
     }
 }

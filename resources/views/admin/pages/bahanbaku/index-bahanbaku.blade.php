@@ -7,6 +7,7 @@
     :root {
         --primary: #4361ee;
         --secondary: #3f37c9;
+        --primary-hover: #3a4fd8;
         --success: #4cc9f0;
         --info: #4895ef;
         --warning: #f72585;
@@ -248,7 +249,7 @@
         color: var(--dark);
         position: sticky;
         top: 0;
-        z-index: 100;
+        z-index: 5;
         cursor: pointer;
         user-select: none;
         font-size: 0.9rem;
@@ -625,12 +626,177 @@
         -webkit-overflow-scrolling: touch;
         width: 100%;
     }
+
+/* SweetAlert Custom Styling untuk Delete Confirmation */
+.swal-delete-popup {
+    border-radius: var(--border-radius) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+.swal-delete-popup .swal2-title {
+    color: var(--dark) !important;
+    font-weight: 600 !important;
+    font-size: 1.4rem !important;
+}
+
+.swal-delete-popup .swal2-html-container {
+    color: var(--gray) !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+}
+
+.swal-delete-popup .swal2-icon.swal2-warning {
+    border-color: var(--warning) !important;
+    color: var(--warning) !important;
+}
+</style>
+
+<style>
+    /* SweetAlert Custom Styles */
+    .swal-wide {
+        width: 500px !important;
+    }
+
+    .swal2-popup .swal2-title {
+        font-size: 24px !important;
+        color: var(--primary) !important;
+    }
+
+    .swal2-popup .swal2-confirm {
+        background-color: #e63946 !important;
+        border-color: #e63946 !important;
+        font-weight: 600 !important;
+        padding: 10px 30px !important;
+    }
+
+    .swal2-popup .swal2-confirm:hover {
+        background-color: #c22c38 !important;
+        border-color: #c22c38 !important;
+    }
+
+    .swal2-popup .swal2-cancel {
+        background-color: #4361ee !important;
+        border-color: #4361ee !important;
+        font-weight: 600 !important;
+        padding: 10px 30px !important;
+    }
+
+    .swal2-popup .swal2-cancel:hover {
+        background-color: #3a56d4 !important;
+        border-color: #3a56d4 !important;
+    }
+
+    /* Detail Popup Styles */
+    .detail-box {
+        max-width: 520px;
+        margin: auto;
+        text-align: left;
+        color: #343a40;
+        font-family: "Segoe UI", Roboto, sans-serif;
+    }
+
+    .detail-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .icon-wrapper {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #d1f1dc, #b0e7c1);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
+        color: #198754;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+    }
+
+    .detail-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: .25rem;
+        color: #343a40;
+    }
+
+    .detail-sub {
+        font-size: .9rem;
+        color: #6c757d;
+    }
+
+    .status-badge {
+        font-weight: 600;
+        padding: .4rem .75rem;
+        border-radius: 1rem;
+        font-size: .8rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: .25rem;
+        flex-shrink: 0;
+    }
+
+    .status-active {
+        background: #198754;
+        color: #fff;
+    }
+
+    .status-inactive {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: .75rem 0;
+        border-bottom: 1px solid #e1e5ea;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .label {
+        font-size: .9rem;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+    }
+
+    .value {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: #343a40;
+    }
+
+    .stok-highlight {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #198754;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .swal-detail-popup {
+        font-family: "Segoe UI", Roboto, sans-serif !important;
+    }
+
+    .flex-grow-1 {
+        flex-grow: 1;
+    }
 </style>
 
 <div class="container">
     <div class="page-header">
         <h1><i class="fas fa-cogs"></i> Bahan Baku Produksi</h1>
-        <button class="btn btn-primary" id="btnTambah"><i class="fas fa-plus"></i> Tambah Bahan Baku</button>
+        <a href="{{ route('backoffice.bahanbaku.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Tambah Bahan Baku</a>
     </div>
     
     <div class="controls">
@@ -666,8 +832,8 @@
             <tr>
                 <th data-sort="no" style="width: 6%;">No</th>
                 <th data-sort="kode" style="width: 12%;">Kode Bahan <i class="fas fa-sort"></i></th>
-                <th data-sort="nama" style="width: 25%;">Nama Bahan <i class="fas fa-sort"></i></th>
-                <th data-sort="kategori" style="width: 12%;">Kategori <i class="fas fa-sort"></i></th>
+                <th data-sort="nama" style="width: 20%;">Nama Bahan <i class="fas fa-sort"></i></th>
+                <th data-sort="master" style="width: 20%;">Master Bahan <i class="fas fa-sort"></i></th>
                 <th data-sort="satuan" style="width: 10%;">Satuan <i class="fas fa-sort"></i></th>
                 <th data-sort="stok" style="width: 12%;">Total Stok <i class="fas fa-sort"></i></th>
                 <th data-sort="status" style="width: 10%;">Status <i class="fas fa-sort"></i></th>
@@ -680,22 +846,23 @@
                 <td>{{ $bahanBakus->firstItem() + $index }}</td>
                 <td>{{ $bahan->kode_bahan }}</td>
                 <td>{{ $bahan->nama_bahan }}</td>
-                <td>{{ $bahan->kategori ?? '-' }}</td>
+                <td>{{ $bahan->masterBahan->nama_bahan ?? '-' }}</td>
                 <td>{{ $bahan->satuan }}</td>
-                <td>{{ number_format($bahan->stok ?? 0) }}</td>
+                <td>{{ number_format($bahan->stok, 2) }}</td>
                 <td>
-                    <span class="badge {{ $bahan->status ? 'badge-success' : 'badge-danger' }}">
-                        {{ $bahan->status ? 'Aktif' : 'Nonaktif' }}
+                    <span class="badge {{ $bahan->status === 'aktif' ? 'badge-success' : 'badge-danger' }}">
+                        {{ $bahan->status === 'aktif' ? 'Aktif' : 'Nonaktif' }}
                     </span>
                 </td>
                 <td class="actions">
-                    <a href="{{ route('backoffice.bahanbaku.show', $bahan->id) }}" class="btn btn-info btn-action" title="Lihat"><i class="fas fa-eye"></i></a>
+                    <button class="btn btn-info btn-action" title="Lihat" onclick="viewData(event)"><i class="fas fa-eye"></i></button>
                     <a href="{{ route('backoffice.bahanbaku.edit', $bahan->id) }}" class="btn btn-warning btn-action" title="Edit"><i class="fas fa-edit"></i></a>
-                    <form action="{{ route('backoffice.bahanbaku.destroy', $bahan->id) }}" method="POST" style="display: inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-action" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus bahan baku ini?')"><i class="fas fa-trash"></i></button>
-                    </form>
+                    <button type="button" class="btn btn-danger btn-action delete-btn" title="Hapus" 
+                            data-id="{{ $bahan->id }}" 
+                            data-nama="{{ $bahan->nama_bahan }}"
+                            data-url="{{ route('backoffice.bahanbaku.destroy', $bahan->id) }}">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </td>
             </tr>
             @empty
@@ -755,65 +922,6 @@
     @endif
 </div>
 
-<!-- Modal Form -->
-<div class="modal" id="formModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 id="modalTitle">Tambah Bahan Baku Produksi</h2>
-            <span class="close">&times;</span>
-        </div>
-        
-        <form id="dataForm">
-            <div class="form-group">
-                <label for="kode_bahan">Kode Bahan</label>
-                <input type="text" id="kode_bahan" name="kode_bahan" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="nama_bahan">Nama Bahan</label>
-                <input type="text" id="nama_bahan" name="nama_bahan" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="kategori">Kategori</label>
-                <select id="kategori" name="kategori" required>
-                    <option value="">Pilih Kategori</option>
-                    <option value="operational">Operational</option>
-                    <option value="master">Master</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="deskripsi">Deskripsi</label>
-                <textarea id="deskripsi" name="deskripsi" rows="3"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="satuan">Satuan</label>
-                <input type="text" id="satuan" name="satuan" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="stok">Stok</label>
-                <input type="number" id="stok" name="stok" min="0" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="status">Status</label>
-                <select id="status" name="status" required>
-                    <option value="1">Aktif</option>
-                    <option value="0">Nonaktif</option>
-                </select>
-            </div>
-            
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" id="btnBatal">Batal</button>
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <!-- Toast Notification -->
 <div class="toast" id="toast"></div>
 
@@ -821,14 +929,8 @@
     // DOM Elements
     const searchInput = document.getElementById('searchInput');
     const entriesSelect = document.getElementById('entriesSelect');
-    const btnTambah = document.getElementById('btnTambah');
     const btnExport = document.getElementById('btnExport');
     const btnPrint = document.getElementById('btnPrint');
-    const formModal = document.getElementById('formModal');
-    const dataForm = document.getElementById('dataForm');
-    const modalTitle = document.getElementById('modalTitle');
-    const closeModal = document.querySelector('.close');
-    const btnBatal = document.getElementById('btnBatal');
     const table = document.getElementById('dataTable');
     const thElements = document.querySelectorAll('th[data-sort]');
     const toast = document.getElementById('toast');
@@ -846,9 +948,6 @@
     if (entriesSelect) {
         entriesSelect.addEventListener('change', changeEntries);
     }
-    if (btnTambah) {
-        btnTambah.addEventListener('click', openCreateModal);
-    }
     if (btnExport) {
         btnExport.addEventListener('click', exportData);
     }
@@ -856,29 +955,11 @@
         btnPrint.addEventListener('click', printData);
     }
     
-    // Modal event listeners
-    if (closeModal) {
-        closeModal.addEventListener('click', closeFormModal);
-    }
-    if (btnBatal) {
-        btnBatal.addEventListener('click', closeFormModal);
-    }
-    if (dataForm) {
-        dataForm.addEventListener('submit', saveData);
-    }
-    
     // Add event listeners to action buttons
-    document.querySelectorAll('.btn-info').forEach(btn => {
-        btn.addEventListener('click', viewData);
-    });
-    
-    document.querySelectorAll('.btn-warning').forEach(btn => {
-        btn.addEventListener('click', editData);
-    });
-    
-    document.querySelectorAll('.btn-danger').forEach(btn => {
-        btn.addEventListener('click', deleteData);
-    });
+    // Note: Delete buttons now use individual event listeners with SweetAlert2
+    // document.querySelectorAll('.btn-danger').forEach(btn => {
+    //     btn.addEventListener('click', deleteData);
+    // });
     
     // Add event listeners to table headers for sorting
     thElements.forEach(th => {
@@ -912,11 +993,11 @@
             
             const kode = rows[i].cells[1].textContent.toLowerCase();
             const nama = rows[i].cells[2].textContent.toLowerCase();
-            const kategori = rows[i].cells[3].textContent.toLowerCase();
+            const masterBahan = rows[i].cells[3].textContent.toLowerCase();
             
             const matchesSearch = kode.includes(searchText) || 
                                 nama.includes(searchText) || 
-                                kategori.includes(searchText);
+                                masterBahan.includes(searchText);
             
             if (matchesSearch) {
                 rows[i].style.display = '';
@@ -1015,22 +1096,6 @@
         return headers.findIndex(header => header.getAttribute('data-sort') === column);
     }
     
-    function openCreateModal() {
-        modalTitle.textContent = 'Tambah Bahan Baku Produksi';
-        dataForm.reset();
-        formModal.style.display = 'flex';
-        setTimeout(() => {
-            formModal.classList.add('show');
-        }, 10);
-    }
-    
-    function closeFormModal() {
-        formModal.classList.remove('show');
-        setTimeout(() => {
-            formModal.style.display = 'none';
-        }, 300);
-    }
-    
     function exportData() {
         showToast('Mempersiapkan data untuk diexport...', 'info');
     }
@@ -1042,105 +1107,144 @@
     function viewData(event) {
         const row = event.target.closest('tr');
         const cells = row.getElementsByTagName('td');
-        
-        alert(
-            `Detail Bahan Baku:\n\n` +
-            `Kode: ${cells[1].textContent}\n` +
-            `Nama: ${cells[2].textContent}\n` +
-            `Kategori: ${cells[3].textContent}\n` +
-            `Satuan: ${cells[4].textContent}\n` +
-            `Stok: ${cells[5].textContent}\n` +
-            `Status: ${cells[6].textContent}`
-        );
-    }
-    
-    function editData(event) {
-        const row = event.target.closest('tr');
-        const cells = row.getElementsByTagName('td');
-        
-        modalTitle.textContent = 'Edit Bahan Baku';
-        document.getElementById('kode_bahan').value = cells[1].textContent;
-        document.getElementById('nama_bahan').value = cells[2].textContent;
-        document.getElementById('kategori').value = cells[3].textContent.toLowerCase();
-        document.getElementById('satuan').value = cells[4].textContent;
-        document.getElementById('stok').value = parseInt(cells[5].textContent.replace(/,/g, ''));
-        document.getElementById('status').value = cells[6].textContent === 'Aktif' ? '1' : '0';
-        
-        formModal.style.display = 'flex';
-        setTimeout(() => {
-            formModal.classList.add('show');
-        }, 10);
-    }
-    
-    function deleteData(event) {
-        if (confirm('Apakah Anda yakin ingin menghapus bahan baku produksi ini?')) {
-            const row = event.target.closest('tr');
-            row.remove();
-            showToast('Data berhasil dihapus!');
-        }
-    }
-    
-    function saveData(event) {
-        event.preventDefault();
-        
-        const kode = document.getElementById('kode_bahan').value;
-        const nama = document.getElementById('nama_bahan').value;
-        const kategori = document.getElementById('kategori').value;
-        const deskripsi = document.getElementById('deskripsi').value;
-        const satuan = document.getElementById('satuan').value;
-        const stok = document.getElementById('stok').value;
-        const status = document.getElementById('status').value;
-        
-        if (modalTitle.textContent === 'Tambah Bahan Baku') {
-            // Add new row
-            const tbody = table.getElementsByTagName('tbody')[0];
-            const newRow = tbody.insertRow();
-            
-            const noCell = newRow.insertCell(0);
-            const kodeCell = newRow.insertCell(1);
-            const namaCell = newRow.insertCell(2);
-            const kategoriCell = newRow.insertCell(3);
-            const satuanCell = newRow.insertCell(4);
-            const stokCell = newRow.insertCell(5);
-            const statusCell = newRow.insertCell(6);
-            const aksiCell = newRow.insertCell(7);
-            
-            // Calculate next number based on current page and items per page
-            const currentPage = {{ $bahanBakus->currentPage() ?? 1 }};
-            const perPage = {{ $bahanBakus->perPage() ?? 5 }};
-            const totalItems = {{ $bahanBakus->total() ?? 0 }};
-            const nextNumber = totalItems + 1;
-            noCell.textContent = nextNumber;
-            
-            kodeCell.textContent = kode;
-            namaCell.textContent = nama;
-            kategoriCell.textContent = kategori === 'operational' ? 'Operational' : 'Master';
-            satuanCell.textContent = satuan;
-            stokCell.textContent = parseInt(stok).toLocaleString();
-            statusCell.innerHTML = `<span class="badge ${status === '1' ? 'badge-success' : 'badge-danger'}">${status === '1' ? 'Aktif' : 'Nonaktif'}</span>`;
-            aksiCell.innerHTML = `
-                <div class="actions">
-                    <button class="btn btn-info btn-action" title="Lihat" onclick="viewData(event)"><i class="fas fa-eye"></i></button>
-                    <button class="btn btn-warning btn-action" title="Edit" onclick="editData(event)"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-danger btn-action" title="Hapus" onclick="deleteData(event)"><i class="fas fa-trash"></i></button>
+
+        const kode = cells[1].textContent;
+        const nama = cells[2].textContent;
+        const masterBahan = cells[3].textContent;
+        const satuan = cells[4].textContent;
+        const stok = cells[5].textContent.replace(/,/g, '');
+        const status = cells[6].textContent;
+
+        const html = `
+            <div class="detail-box">
+                <div class="detail-header">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="detail-title">${nama}</div>
+                        <div class="detail-sub">Kode: ${kode}</div>
+                    </div>
+                    <div class="status-badge ${status.includes('Aktif') ? 'status-active' : 'status-inactive'}">
+                        <i class="fas ${status.includes('Aktif') ? 'fa-circle-check' : 'fa-circle-xmark'} me-1"></i>${status}
+                    </div>
                 </div>
-            `;
-            
-            showToast('Bahan baku produksi berhasil ditambahkan!');
-        } else {
-            // Update existing row - in real app this would make an AJAX call
-            showToast('Bahan baku produksi berhasil diupdate!');
-        }
-        
-        closeFormModal();
+
+                <div class="detail-row">
+                    <div class="label"><i class="fas fa-cubes me-2"></i>Master Bahan</div>
+                    <div class="value">${masterBahan}</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="label"><i class="fas fa-cubes me-2"></i>Stok</div>
+                    <div class="stok-highlight">
+                        ${parseInt(stok).toLocaleString('id-ID')} ${satuan}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        Swal.fire({
+            title: 'Detail Bahan Baku',
+            html: html,
+            showConfirmButton: true,
+            confirmButtonText: '<i class="fas fa-times"></i> Tutup',
+            confirmButtonColor: 'var(--primary)',
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp'
+            },
+            width: 600,
+            background: '#ffffff',
+            padding: '1.8rem',
+            customClass: {
+                popup: 'swal-detail-popup'
+            }
+        });
     }
     
-    // Close modal when clicking outside of it
-    window.addEventListener('click', function(event) {
-        if (event.target === formModal) {
-            closeFormModal();
+    // Event listener untuk tombol delete - langsung dan sederhana
+    document.addEventListener('click', function(event) {
+        if (event.target.closest('.delete-btn')) {
+            event.preventDefault();
+            const button = event.target.closest('.delete-btn');
+            const id = button.getAttribute('data-id');
+            const nama = button.getAttribute('data-nama');
+            const url = button.getAttribute('data-url');
+
+            if (typeof Swal !== 'undefined') {
+                confirmDelete(id, nama, url, button);
+            } else {
+                console.error('SweetAlert2 not found! Falling back to confirm()');
+                if (confirm(`Apakah Anda yakin ingin menghapus bahan baku ${nama}?`)) {
+                    submitDeleteForm(url);
+                }
+            }
         }
     });
+
+    function submitDeleteForm(url) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = url;
+        form.style.display = 'none';
+
+        // CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        form.appendChild(csrfToken);
+
+        // Method spoofing untuk DELETE
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+        form.appendChild(methodInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    function confirmDelete(id, nama, url, buttonElement) {
+        Swal.fire({
+            title: 'Konfirmasi Hapus',
+            html: `Apakah Anda yakin ingin menghapus bahan baku <strong>${nama}</strong>?<br><br><small class="text-muted">Data yang dihapus tidak dapat dikembalikan.</small>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e63946',
+            cancelButtonColor: '#4361ee',
+            confirmButtonText: '<i class="fas fa-trash me-2"></i>Hapus',
+            cancelButtonText: '<i class="fas fa-times me-2"></i>Batal',
+            reverseButtons: true,
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp'
+            },
+            customClass: {
+                popup: 'swal-delete-popup'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                submitDeleteForm(url);
+            }
+        });
+    }
+
+    // Fungsi deleteData lama sudah tidak digunakan
+    // Diganti dengan confirmDelete yang menggunakan SweetAlert2
+    // function deleteData(event) {
+    //     if (confirm('Apakah Anda yakin ingin menghapus bahan baku produksi ini?')) {
+    //         const row = event.target.closest('tr');
+    //         row.remove();
+    //         showToast('Data berhasil dihapus!');
+    //     }
+    // }
     
     function resetPagination() {
         // Reset to default pagination (5 entries per page)

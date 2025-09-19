@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BahanBaku;
+use App\Models\MasterBahanBaku;
+use Illuminate\Support\Facades\Log;
 
 class BahanBakuController extends Controller
 {
@@ -15,26 +17,18 @@ class BahanBakuController extends Controller
     {
         $isMaster = request()->routeIs('backoffice.master-bahan.*');
         $viewPath = $isMaster ? 'admin.pages.master-bahan.index-master-bahan' : 'admin.pages.bahanbaku.index-bahanbaku';
-        
-        $query = BahanBaku::query();
-        
+
         if ($isMaster) {
-            // Untuk master bahan, tampilkan bahan baku dengan kategori 'Master' atau kosong
-            $query->where(function($q) {
-                $q->where('kategori', 'Master')
-                  ->orWhereNull('kategori');
-            });
+            // Untuk master bahan, gunakan MasterBahanBaku model
+            $query = MasterBahanBaku::query();
         } else {
-            // Untuk operasional, tampilkan bahan baku dengan kategori 'Operational' atau kosong
-            $query->where(function($q) {
-                $q->where('kategori', 'Operational')
-                  ->orWhereNull('kategori');
-            });
+            // Untuk operasional, gunakan BahanBaku model
+            $query = BahanBaku::query();
         }
-        
+
         $perPage = request('per_page', 5); // Default 5, bisa diubah via parameter
         $bahanBakus = $query->paginate($perPage)->appends(request()->query());
-        
+
         return view($viewPath, compact('bahanBakus'));
     }
 
@@ -45,6 +39,13 @@ class BahanBakuController extends Controller
     {
         $isMaster = request()->routeIs('backoffice.master-bahan.*');
         $viewPath = $isMaster ? 'admin.pages.master-bahan.create-master-bahan' : 'admin.pages.bahanbaku.create-bahanbaku';
+
+        if (!$isMaster) {
+            // Untuk operasional, load master bahan untuk dropdown
+            $masterBahans = MasterBahanBaku::aktif()->get();
+            return view($viewPath, compact('masterBahans'));
+        }
+
         return view($viewPath);
     }
 
@@ -53,44 +54,58 @@ class BahanBakuController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'kode_bahan' => 'required|string|max:255|unique:bahan_bakus,kode_bahan',
-            'nama_bahan' => 'required|string|max:255',
-            'kategori' => 'nullable|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'satuan' => 'required|string|max:50',
-            'stok' => 'nullable|integer|min:0',
-            'minimum_stok' => 'nullable|numeric|min:0',
-            'harga_beli_terakhir' => 'nullable|numeric|min:0',
-            'supplier' => 'nullable|string|max:255',
-            'tanggal_kadaluarsa' => 'nullable|date',
-            'status' => 'nullable|boolean'
-        ]);
-
         $isMaster = request()->routeIs('backoffice.master-bahan.*');
         $routeName = $isMaster ? 'backoffice.master-bahan.index' : 'backoffice.bahanbaku.index';
 
-        // Set default kategori jika tidak diset
-        $kategori = $request->kategori;
-        if (!$kategori) {
-            $kategori = $isMaster ? 'Master' : 'Oprasional';
+        if ($isMaster) {
+            // Validation untuk master bahan
+            $request->validate([
+                'kode_bahan' => 'required|string|max:50|unique:master_bahan_baku,kode_bahan',
+                'nama_bahan' => 'required|string|max:255',
+                'satuan' => 'required|string|max:50',
+                'harga_per_satuan' => 'required|numeric|min:0',
+                'deskripsi' => 'nullable|string',
+                'status' => 'nullable|string|in:aktif,nonaktif'
+            ]);
+
+            MasterBahanBaku::create([
+                'kode_bahan' => $request->kode_bahan,
+                'nama_bahan' => $request->nama_bahan,
+                'satuan' => $request->satuan,
+                'harga_per_satuan' => $request->harga_per_satuan,
+                'deskripsi' => $request->deskripsi,
+                'status' => $request->status ?? 'aktif'
+            ]);
+
+            return redirect()->route($routeName)->with('success', 'Master bahan baku berhasil dibuat.');
+        } else {
+            // Validation untuk operasional bahan
+            $request->validate([
+                'master_bahan_id' => 'required|exists:master_bahan_baku,id',
+                'kode_bahan' => 'required|string|max:50|unique:bahan_baku,kode_bahan',
+                'nama_bahan' => 'required|string|max:255',
+                'satuan' => 'required|string|max:50',
+                'harga_per_satuan' => 'required|numeric|min:0',
+                'stok' => 'required|numeric|min:0',
+                'tanggal_masuk' => 'required|date',
+                'tanggal_kadaluarsa' => 'nullable|date',
+                'status' => 'nullable|string|in:aktif,nonaktif'
+            ]);
+
+            BahanBaku::create([
+                'master_bahan_id' => $request->master_bahan_id,
+                'kode_bahan' => $request->kode_bahan,
+                'nama_bahan' => $request->nama_bahan,
+                'satuan' => $request->satuan,
+                'harga_per_satuan' => $request->harga_per_satuan,
+                'stok' => $request->stok,
+                'tanggal_masuk' => $request->tanggal_masuk,
+                'tanggal_kadaluarsa' => $request->tanggal_kadaluarsa,
+                'status' => $request->status ?? 'aktif'
+            ]);
+
+            return redirect()->route($routeName)->with('success', 'Bahan baku berhasil dibuat.');
         }
-
-        BahanBaku::create([
-            'kode_bahan' => $request->kode_bahan,
-            'nama_bahan' => $request->nama_bahan,
-            'kategori' => $kategori,
-            'deskripsi' => $request->deskripsi,
-            'satuan' => $request->satuan,
-            'stok' => $request->stok ?? 0,
-            'minimum_stok' => $request->minimum_stok ?? 0,
-            'harga_beli_terakhir' => $request->harga_beli_terakhir,
-            'supplier' => $request->supplier,
-            'tanggal_kadaluarsa' => $request->tanggal_kadaluarsa,
-            'status' => $request->status ?? true
-        ]);
-
-        return redirect()->route($routeName)->with('success', 'Bahan baku berhasil dibuat.');
     }
 
     /**
@@ -100,9 +115,13 @@ class BahanBakuController extends Controller
     {
         $isMaster = request()->routeIs('backoffice.master-bahan.*');
         $viewPath = $isMaster ? 'admin.pages.master-bahan.show-master-bahan' : 'admin.pages.bahanbaku.show-bahanbaku';
-        
-        $bahanBaku = BahanBaku::findOrFail($id);
-        
+
+        if ($isMaster) {
+            $bahanBaku = MasterBahanBaku::findOrFail($id);
+        } else {
+            $bahanBaku = BahanBaku::findOrFail($id);
+        }
+
         return view($viewPath, compact('bahanBaku'));
     }
 
@@ -113,9 +132,16 @@ class BahanBakuController extends Controller
     {
         $isMaster = request()->routeIs('backoffice.master-bahan.*');
         $viewPath = $isMaster ? 'admin.pages.master-bahan.edit-master-bahan' : 'admin.pages.bahanbaku.edit-bahanbaku';
-        
-        $bahanBaku = BahanBaku::findOrFail($id);
-        
+
+        if ($isMaster) {
+            $bahanBaku = MasterBahanBaku::findOrFail($id);
+        } else {
+            $bahanBaku = BahanBaku::findOrFail($id);
+            // Load master bahan untuk dropdown
+            $masterBahans = MasterBahanBaku::aktif()->get();
+            return view($viewPath, compact('bahanBaku', 'masterBahans'));
+        }
+
         return view($viewPath, compact('bahanBaku'));
     }
 
@@ -124,40 +150,62 @@ class BahanBakuController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
-            'kode_bahan' => 'required|string|max:255|unique:bahan_bakus,kode_bahan,' . $id,
-            'nama_bahan' => 'required|string|max:255',
-            'kategori' => 'nullable|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'satuan' => 'required|string|max:50',
-            'stok' => 'nullable|integer|min:0',
-            'minimum_stok' => 'nullable|numeric|min:0',
-            'harga_beli_terakhir' => 'nullable|numeric|min:0',
-            'supplier' => 'nullable|string|max:255',
-            'tanggal_kadaluarsa' => 'nullable|date',
-            'status' => 'nullable|boolean'
-        ]);
-
         $isMaster = request()->routeIs('backoffice.master-bahan.*');
         $routeName = $isMaster ? 'backoffice.master-bahan.index' : 'backoffice.bahanbaku.index';
 
-        $bahanBaku = BahanBaku::findOrFail($id);
+        if ($isMaster) {
+            // Validation untuk master bahan
+            $request->validate([
+                'kode_bahan' => 'required|string|max:50|unique:master_bahan_baku,kode_bahan,' . $id,
+                'nama_bahan' => 'required|string|max:255',
+                'satuan' => 'required|string|max:50',
+                'harga_per_satuan' => 'required|numeric|min:0',
+                'deskripsi' => 'nullable|string',
+                'status' => 'nullable|string|in:aktif,nonaktif'
+            ]);
 
-        $bahanBaku->update([
-            'kode_bahan' => $request->kode_bahan,
-            'nama_bahan' => $request->nama_bahan,
-            'kategori' => $request->kategori,
-            'deskripsi' => $request->deskripsi,
-            'satuan' => $request->satuan,
-            'stok' => $request->stok ?? 0,
-            'minimum_stok' => $request->minimum_stok ?? 0,
-            'harga_beli_terakhir' => $request->harga_beli_terakhir,
-            'supplier' => $request->supplier,
-            'tanggal_kadaluarsa' => $request->tanggal_kadaluarsa,
-            'status' => $request->status ?? true
-        ]);
+            $bahanBaku = MasterBahanBaku::findOrFail($id);
 
-        return redirect()->route($routeName)->with('success', 'Bahan baku berhasil diperbarui.');
+            $bahanBaku->update([
+                'kode_bahan' => $request->kode_bahan,
+                'nama_bahan' => $request->nama_bahan,
+                'satuan' => $request->satuan,
+                'harga_per_satuan' => $request->harga_per_satuan,
+                'deskripsi' => $request->deskripsi,
+                'status' => $request->status ?? 'aktif'
+            ]);
+
+            return redirect()->route($routeName)->with('success', 'Master bahan baku berhasil diperbarui.');
+        } else {
+            // Validation untuk operasional bahan
+            $request->validate([
+                'master_bahan_id' => 'required|exists:master_bahan_baku,id',
+                'kode_bahan' => 'required|string|max:50|unique:bahan_baku,kode_bahan,' . $id,
+                'nama_bahan' => 'required|string|max:255',
+                'satuan' => 'required|string|max:50',
+                'harga_per_satuan' => 'required|numeric|min:0',
+                'stok' => 'required|numeric|min:0',
+                'tanggal_masuk' => 'required|date',
+                'tanggal_kadaluarsa' => 'nullable|date',
+                'status' => 'nullable|string|in:aktif,nonaktif'
+            ]);
+
+            $bahanBaku = BahanBaku::findOrFail($id);
+
+            $bahanBaku->update([
+                'master_bahan_id' => $request->master_bahan_id,
+                'kode_bahan' => $request->kode_bahan,
+                'nama_bahan' => $request->nama_bahan,
+                'satuan' => $request->satuan,
+                'harga_per_satuan' => $request->harga_per_satuan,
+                'stok' => $request->stok,
+                'tanggal_masuk' => $request->tanggal_masuk,
+                'tanggal_kadaluarsa' => $request->tanggal_kadaluarsa,
+                'status' => $request->status ?? 'aktif'
+            ]);
+
+            return redirect()->route($routeName)->with('success', 'Bahan baku berhasil diperbarui.');
+        }
     }
 
     /**
@@ -165,9 +213,19 @@ class BahanBakuController extends Controller
      */
     public function destroy(string $id)
     {
-        // TODO: Implement destroy logic
         $isMaster = request()->routeIs('backoffice.master-bahan.*');
         $routeName = $isMaster ? 'backoffice.master-bahan.index' : 'backoffice.bahanbaku.index';
-        return redirect()->route($routeName)->with('success', 'Bahan baku berhasil dihapus.');
+
+        if ($isMaster) {
+            $bahanBaku = MasterBahanBaku::findOrFail($id);
+            $bahanBaku->delete();
+            $message = 'Master bahan baku berhasil dihapus.';
+        } else {
+            $bahanBaku = BahanBaku::findOrFail($id);
+            $bahanBaku->delete();
+            $message = 'Bahan baku berhasil dihapus.';
+        }
+
+        return redirect()->route($routeName)->with('success', $message);
     }
 }
