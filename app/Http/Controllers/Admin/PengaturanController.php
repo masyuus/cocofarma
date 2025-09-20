@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Pengaturan;
+use App\Models\BahanBaku;
+use App\Models\StokBahanBaku;
+use App\Models\Produk;
+use App\Models\StokProduk;
 
 class PengaturanController extends Controller
 {
@@ -51,20 +55,157 @@ class PengaturanController extends Controller
     }
 
     /**
-     * Save dashboard goal setting
+     * Display alerts and notifications
      */
-    public function saveDashboardGoal(Request $request)
+    public function alerts()
     {
-        $request->validate([
-            'dashboard_goal' => 'required|numeric|min:0|max:100',
-        ]);
+        $stockAlerts = $this->getStockAlerts();
+        $productionAlerts = $this->getProductionAlerts();
+        $expiryAlerts = $this->getExpiryAlerts();
 
-        Pengaturan::updateOrCreate(
-            ['key' => 'dashboard_goal'],
-            ['value' => $request->input('dashboard_goal'), 'type' => 'number', 'description' => 'Goal persen untuk dashboard']
-        );
+        return view('admin.pages.pengaturan.alerts', compact('stockAlerts', 'productionAlerts', 'expiryAlerts'));
+    }
 
-        return redirect()->route('backoffice.pengaturan.index')->with('success', 'Pengaturan goal dashboard disimpan.');
+    /**
+     * Get stock alerts for low inventory
+     */
+    private function getStockAlerts()
+    {
+        $alerts = [];
+
+        // Check bahan baku stock
+        $bahanBakus = BahanBaku::aktif()->get();
+        foreach ($bahanBakus as $bahan) {
+            $totalStok = StokBahanBaku::where('bahan_baku_id', $bahan->id)
+                ->sum('sisa_stok');
+
+            $minStock = $bahan->stok_minimum ?? 10; // Default minimum stock
+
+            if ($totalStok <= $minStock) {
+                $alerts[] = [
+                    'type' => 'bahan_baku',
+                    'item' => $bahan,
+                    'current_stock' => $totalStok,
+                    'min_stock' => $minStock,
+                    'severity' => $totalStok <= 0 ? 'critical' : 'warning',
+                    'message' => "Stok {$bahan->nama_bahan} rendah"
+                ];
+            }
+        }
+
+        // Check produk stock
+        $produks = Produk::aktif()->get();
+        foreach ($produks as $produk) {
+            $totalStok = StokProduk::where('produk_id', $produk->id)
+                ->sum('sisa_stok');
+
+            $minStock = $produk->minimum_stok ?? 5; // Default minimum stock
+
+            if ($totalStok <= $minStock) {
+                $alerts[] = [
+                    'type' => 'produk',
+                    'item' => $produk,
+                    'current_stock' => $totalStok,
+                    'min_stock' => $minStock,
+                    'severity' => $totalStok <= 0 ? 'critical' : 'warning',
+                    'message' => "Stok {$produk->nama_produk} rendah"
+                ];
+            }
+        }
+
+        return $alerts;
+    }
+
+    /**
+     * Get production alerts
+     */
+    private function getProductionAlerts()
+    {
+        $alerts = [];
+
+        // Check for pending productions that are overdue
+        $overdueProductions = \App\Models\Produksi::where('status', 'pending')
+            ->where('tanggal_produksi', '<', now()->subDays(1))
+            ->with('produk')
+            ->get();
+
+        foreach ($overdueProductions as $produksi) {
+            $alerts[] = [
+                'type' => 'production',
+                'item' => $produksi,
+                'severity' => 'warning',
+                'message' => "Produksi {$produksi->nomor_produksi} terlambat"
+            ];
+        }
+
+        // Check for furnace utilization
+        $activeFurnaces = \App\Models\Tungku::whereHas('batchProduksis', function($query) {
+            $query->where('status', 'proses');
+        })->count();
+
+        $totalFurnaces = \App\Models\Tungku::aktif()->count();
+
+        if ($activeFurnaces == 0 && $totalFurnaces > 0) {
+            $alerts[] = [
+                'type' => 'furnace',
+                'severity' => 'info',
+                'message' => 'Tidak ada tungku yang sedang digunakan'
+            ];
+        } elseif ($activeFurnaces == $totalFurnaces && $totalFurnaces > 0) {
+            $alerts[] = [
+                'type' => 'furnace',
+                'severity' => 'warning',
+                'message' => 'Semua tungku sedang digunakan'
+            ];
+        }
+
+        return $alerts;
+    }
+
+    /**
+     * Get expiry alerts
+     */
+    private function getExpiryAlerts()
+    {
+        $alerts = [];
+
+        // Check bahan baku expiry
+        $expiringBahanBaku = StokBahanBaku::where('tanggal_kadaluarsa', '<=', now()->addDays(30))
+            ->where('tanggal_kadaluarsa', '>=', now())
+            ->where('sisa_stok', '>', 0)
+            ->with('bahanBaku')
+            ->get();
+
+        foreach ($expiringBahanBaku as $stok) {
+            $daysLeft = now()->diffInDays($stok->tanggal_kadaluarsa);
+            $alerts[] = [
+                'type' => 'expiry_bahan',
+                'item' => $stok,
+                'days_left' => $daysLeft,
+                'severity' => $daysLeft <= 7 ? 'critical' : 'warning',
+                'message' => "Batch {$stok->nomor_batch} {$stok->bahanBaku->nama_bahan} akan kadaluarsa dalam {$daysLeft} hari"
+            ];
+        }
+
+        // Check produk expiry
+        $expiringProduk = StokProduk::where('tanggal_kadaluarsa', '<=', now()->addDays(30))
+            ->where('tanggal_kadaluarsa', '>=', now())
+            ->where('sisa_stok', '>', 0)
+            ->with('produk')
+            ->get();
+
+        foreach ($expiringProduk as $stok) {
+            $daysLeft = now()->diffInDays($stok->tanggal_kadaluarsa);
+            $alerts[] = [
+                'type' => 'expiry_produk',
+                'item' => $stok,
+                'days_left' => $daysLeft,
+                'severity' => $daysLeft <= 7 ? 'critical' : 'warning',
+                'message' => "{$stok->produk->nama_produk} grade {$stok->grade_kualitas} akan kadaluarsa dalam {$daysLeft} hari"
+            ];
+        }
+
+        return $alerts;
     }
 
     /**

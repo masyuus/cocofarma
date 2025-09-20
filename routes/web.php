@@ -5,7 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\ProdukController;
 use App\Http\Controllers\Admin\BahanBakuController;
 use App\Http\Controllers\Admin\PesananController;
-use App\Http\Controllers\Admin\ProduksiController;
+use App\Http\Controllers\ProduksiController as MainProduksiController;
 use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\UserController;
@@ -49,7 +49,15 @@ Route::middleware(['admin.auth'])->prefix('backoffice')->name('backoffice.')->gr
         });
 
         Route::prefix('produksi')->name('produksi.')->group(function () {
-            Route::resource('/', ProduksiController::class)->parameters(['' => 'produksi']);
+            Route::get('/', [MainProduksiController::class, 'index'])->name('index');
+            Route::get('/create', [MainProduksiController::class, 'create'])->name('create');
+            Route::post('/', [MainProduksiController::class, 'store'])->name('store');
+            Route::get('/{produksi}', [MainProduksiController::class, 'show'])->name('show');
+            Route::get('/{produksi}/edit', [MainProduksiController::class, 'edit'])->name('edit');
+            Route::put('/{produksi}', [MainProduksiController::class, 'update'])->name('update');
+            Route::delete('/{produksi}', [MainProduksiController::class, 'destroy'])->name('destroy');
+            Route::post('/{produksi}/start', [MainProduksiController::class, 'startProduction'])->name('start');
+            Route::post('/{produksi}/complete', [MainProduksiController::class, 'completeProduction'])->name('complete');
         });
 
         Route::prefix('transaksi')->name('transaksi.')->group(function () {
@@ -61,6 +69,7 @@ Route::middleware(['admin.auth'])->prefix('backoffice')->name('backoffice.')->gr
             Route::get('/produksi', [LaporanController::class, 'produksi'])->name('produksi');
             Route::get('/stok', [LaporanController::class, 'stok'])->name('stok');
             Route::get('/penjualan', [LaporanController::class, 'penjualan'])->name('penjualan');
+            Route::get('/cost-analysis', [LaporanController::class, 'costAnalysis'])->name('cost-analysis');
             Route::get('/export-pdf/{type}', [LaporanController::class, 'exportPdf'])->name('export-pdf');
             Route::get('/export-excel/{type}', [LaporanController::class, 'exportExcel'])->name('export-excel');
         });
@@ -85,6 +94,7 @@ Route::middleware(['admin.auth'])->prefix('backoffice')->name('backoffice.')->gr
             // Additional pengaturan actions
             Route::post('/backup-database', [PengaturanController::class, 'backupDatabase'])->name('backup-database');
             Route::post('/save-dashboard-goal', [PengaturanController::class, 'saveDashboardGoal'])->name('save-dashboard-goal');
+            Route::get('/alerts', [PengaturanController::class, 'alerts'])->name('alerts');
         });
     });
 });

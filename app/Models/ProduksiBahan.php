@@ -11,13 +11,19 @@ class ProduksiBahan extends Model
     protected $fillable = [
         'produksi_id',
         'bahan_baku_id',
-        'jumlah_digunakan'
+        'stok_bahan_baku_id',
+        'jumlah_digunakan',
+        'harga_satuan',
+        'total_biaya'
     ];
 
     protected $casts = [
         'produksi_id' => 'integer',
         'bahan_baku_id' => 'integer',
-        'jumlah_digunakan' => 'decimal:2'
+        'stok_bahan_baku_id' => 'integer',
+        'jumlah_digunakan' => 'decimal:2',
+        'harga_satuan' => 'decimal:2',
+        'total_biaya' => 'decimal:2'
     ];
 
     // Relasi dengan Produksi
@@ -30,5 +36,11 @@ class ProduksiBahan extends Model
     public function bahanBaku()
     {
         return $this->belongsTo(BahanBaku::class, 'bahan_baku_id');
+    }
+
+    // Relasi dengan StokBahanBaku
+    public function stokBahanBaku()
+    {
+        return $this->belongsTo(StokBahanBaku::class, 'stok_bahan_baku_id');
     }
 }

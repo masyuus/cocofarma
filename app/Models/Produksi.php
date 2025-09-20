@@ -9,17 +9,26 @@ class Produksi extends Model
     protected $table = 'produksis';
 
     protected $fillable = [
-        'kode_produksi',
-        'tanggal_produksi',
+        'nomor_produksi',
+        'batch_produksi_id',
         'produk_id',
-        'jumlah_produksi',
-        'status'
+        'tanggal_produksi',
+        'jumlah_target',
+        'jumlah_hasil',
+        'grade_kualitas',
+        'biaya_produksi',
+        'status',
+        'catatan',
+        'user_id'
     ];
 
     protected $casts = [
         'tanggal_produksi' => 'date',
         'produk_id' => 'integer',
-        'jumlah_produksi' => 'decimal:2',
+        'batch_produksi_id' => 'integer',
+        'jumlah_target' => 'decimal:2',
+        'jumlah_hasil' => 'decimal:2',
+        'biaya_produksi' => 'decimal:2',
         'status' => 'string'
     ];
 
@@ -33,6 +42,18 @@ class Produksi extends Model
     public function produksiBahans()
     {
         return $this->hasMany(ProduksiBahan::class, 'produksi_id');
+    }
+
+    // Relasi dengan BatchProduksi
+    public function batchProduksi()
+    {
+        return $this->belongsTo(BatchProduksi::class, 'batch_produksi_id');
+    }
+
+    // Relasi dengan User
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     // Accessor untuk status label

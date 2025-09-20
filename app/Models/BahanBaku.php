@@ -15,6 +15,7 @@ class BahanBaku extends Model
         'satuan',
         'harga_per_satuan',
         'stok',
+        'stok_minimum',
         'tanggal_masuk',
         'tanggal_kadaluarsa',
         'status'
@@ -24,6 +25,7 @@ class BahanBaku extends Model
         'master_bahan_id' => 'integer',
         'harga_per_satuan' => 'decimal:2',
         'stok' => 'decimal:2',
+        'stok_minimum' => 'decimal:2',
         'tanggal_masuk' => 'date',
         'tanggal_kadaluarsa' => 'date',
         'status' => 'string'

@@ -10,8 +10,11 @@ class StokBahanBaku extends Model
 
     protected $fillable = [
         'bahan_baku_id',
+        'nomor_batch',
+        'supplier',
         'jumlah_masuk',
-        'jumlah_keluar',
+        'harga_satuan',
+        'tanggal_kadaluarsa',
         'sisa_stok',
         'tanggal',
         'keterangan'
@@ -20,15 +23,22 @@ class StokBahanBaku extends Model
     protected $casts = [
         'bahan_baku_id' => 'integer',
         'jumlah_masuk' => 'decimal:2',
-        'jumlah_keluar' => 'decimal:2',
+        'harga_satuan' => 'decimal:2',
         'sisa_stok' => 'decimal:2',
-        'tanggal' => 'date'
+        'tanggal' => 'date',
+        'tanggal_kadaluarsa' => 'date'
     ];
 
     // Relationship dengan bahan baku
     public function bahanBaku()
     {
         return $this->belongsTo(BahanBaku::class, 'bahan_baku_id');
+    }
+
+    // Relationship dengan produksi bahan (untuk tracking penggunaan)
+    public function produksiBahans()
+    {
+        return $this->hasMany(ProduksiBahan::class, 'stok_bahan_baku_id');
     }
 
     // Scope untuk stok masuk

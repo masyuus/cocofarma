@@ -34,41 +34,64 @@
         overflow-y: auto;
     }
 
+    body {
+        background: #f5f7fa;
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     .container {
-        max-width: 1100px;
-        margin: 0 auto;
+        max-width: 1400px;
+        margin: 40px auto 60px auto;
         background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
-        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 30px;
         overflow: hidden;
+        min-height: calc(100vh - 200px);
     }
 
-    header {
+    /* HEADER */
+    .header-section {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 24px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid var(--light-gray);
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e9ecef;
     }
 
-    .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid var(--light-gray);
+    .header-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #212529;
+        margin: 0;
     }
 
-    h1 {
-        color: var(--dark);
-        font-size: 1.6rem;
+    .header-subtitle {
+        color: #6c757d;
+        font-size: 0.95rem;
+        margin: 5px 0 0 0;
+    }
+
+    .btn-add {
+        background: #4361ee;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
         font-weight: 600;
-        display: flex;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-add:hover {
+        background: #3a4fd8;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(67, 97, 238, 0.4);
     }
 
     .controls {
@@ -102,7 +125,7 @@
         border: 1px solid var(--light-gray);
         border-radius: var(--border-radius);
         font-size: 0.9rem;
-        width: 220px;
+        width: 250px;
         transition: var(--transition);
     }
 
@@ -110,6 +133,7 @@
         outline: none;
         border-color: var(--primary);
         box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        width: 280px; /* expand on focus to match master-produk */
     }
 
     .search-box i {
@@ -185,6 +209,26 @@
         margin: 0 2px;
     }
 
+    .search-box .clear-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: var(--gray);
+        cursor: pointer;
+        padding: 6px;
+        display: none;
+    }
+
+    .right-controls .btn {
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
     .btn-info {
         background: var(--info);
         color: white;
@@ -234,6 +278,57 @@
         position: sticky;
         top: 0;
         z-index: 10;
+    }
+
+    /* Muted sort icons by default, colored when active.
+       Icons are smaller and always visible; only the active column icon is black. */
+
+    /* Two icons (up and down) are present; both visible but muted by default. */
+    .table th i.sort-up,
+    .table th i.sort-down {
+        color: rgba(0,0,0,0.35);
+        margin-left: 6px;
+        transition: color 0.18s ease, transform 0.18s ease;
+        font-size: 0.65rem; /* smaller icon size */
+        opacity: 1; /* always visible */
+        margin-left: 8px;
+    }
+
+    /* Container to stack icons vertically and align them to the right */
+    .sort-icons {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-left: 8px;
+        vertical-align: middle;
+        line-height: 1;
+    }
+
+    .table th .sort-icons i {
+        display: block;
+        width: 12px;
+        text-align: center;
+        line-height: 1;
+        margin: 0; /* remove gaps */
+        padding: 0;
+        height: 12px; /* compact height */
+    }
+
+    /* Bring the two arrows closer so they visually connect */
+    .table th .sort-icons i.sort-up { margin-bottom: -5px; }
+    .table th .sort-icons i.sort-down { margin-top: -5px; }
+
+    /* Active direction classes make the relevant icon black and slightly larger */
+    .table th.active i.sort-up.active-up,
+    .table th.active i.sort-down.active-down {
+        color: #000000 !important;
+        font-size: 0.75rem;
+    }
+
+    /* Keep hover from changing color; active is the only indicator */
+    .table th:hover i.fas {
+        color: rgba(0,0,0,0.35);
     }
 
     .table tbody tr {
@@ -374,6 +469,35 @@
     .toast.show {
         opacity: 1;
         transform: translateY(0);
+    }
+
+    /* TABLE */
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e9ecef;
+    }
+
+    .table-header {
+        background: #f8f9fa;
+        padding: 20px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .table-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #212529;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .table-title i {
+        color: #4361ee;
     }
 
     .table-responsive {
@@ -533,28 +657,30 @@
 </style>
 
 <div class="container">
-    <div class="page-header">
-        <h1>
-            <i class="fas fa-cubes"></i>
-            Master Bahan Baku
-        </h1>
-        <div class="right-controls">
-                    <a href="{{ route('backoffice.master-bahan.create') }}" class="btn btn-success">
+    <div class="header-section">
+        <div>
+            <h1 class="header-title">
+                <i class="fas fa-cubes"></i>
+                Master Bahan Baku
+            </h1>
+            <p class="header-subtitle">Kelola data master bahan baku untuk produksi</p>
+        </div>
+        <a href="{{ route('backoffice.master-bahan.create') }}" class="btn-add">
             <i class="fas fa-plus"></i>
             Tambah Master Bahan
         </a>
-        </div>
     </div>
 
     <div class="controls">
         <div class="left-controls">
             <div class="entries-select">
-                <label for="entries">Tampilkan</label>
-                <select id="entries" onchange="changeEntries(this.value)">
+                <label for="entriesSelect">Tampilkan</label>
+                <select id="entriesSelect">
                     <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
                     <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                     <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
                     <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                    <option value="all">Semua</option>
                 </select>
                 <span>entri</span>
             </div>
@@ -563,20 +689,57 @@
         <div class="right-controls">
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Cari bahan baku..." value="{{ request('search') }}" onkeyup="searchTable()">
+                <input type="text" id="searchInput" placeholder="Cari bahan baku..." value="{{ request('search') }}">
+                <button type="button" class="clear-btn" onclick="clearSearch()" style="display:none;"><i class="fas fa-times"></i></button>
             </div>
+
+            <button id="btnExport" class="btn btn-primary" type="button"><i class="fas fa-file-export"></i> Export</button>
+            <button id="btnPrint" class="btn btn-secondary" type="button"><i class="fas fa-print"></i> Print</button>
         </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table" id="dataTable">
+    <div class="table-container">
+        <div class="table-header">
+            <h2 class="table-title">
+                <i class="fas fa-list"></i>
+                Daftar Master Bahan Baku
+            </h2>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table" id="dataTable">
             <thead>
                 <tr>
-                    <th>No</th>
-                    <th>Nama Bahan</th>
-                    <th>Satuan</th>
-                    <th>Harga per Unit</th>
-                    <th>Status</th>
+                    <th data-sort="no">No
+                        <span class="sort-icons">
+                            <i class="fas fa-sort-up sort-up"></i>
+                            <i class="fas fa-sort-down sort-down"></i>
+                        </span>
+                    </th>
+                    <th data-sort="nama">Nama Bahan
+                        <span class="sort-icons">
+                            <i class="fas fa-sort-up sort-up"></i>
+                            <i class="fas fa-sort-down sort-down"></i>
+                        </span>
+                    </th>
+                    <th data-sort="satuan">Satuan
+                        <span class="sort-icons">
+                            <i class="fas fa-sort-up sort-up"></i>
+                            <i class="fas fa-sort-down sort-down"></i>
+                        </span>
+                    </th>
+                    <th data-sort="harga">Harga per Unit
+                        <span class="sort-icons">
+                            <i class="fas fa-sort-up sort-up"></i>
+                            <i class="fas fa-sort-down sort-down"></i>
+                        </span>
+                    </th>
+                    <th data-sort="status">Status
+                        <span class="sort-icons">
+                            <i class="fas fa-sort-up sort-up"></i>
+                            <i class="fas fa-sort-down sort-down"></i>
+                        </span>
+                    </th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -618,6 +781,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 
     @if(isset($bahanBakus) && $bahanBakus->hasPages() && $bahanBakus->lastPage() > 1)
@@ -669,14 +833,20 @@
 </div>
 
 <script>
-    // Toast notification function
-    function showToast(message, type = 'success') {
+    // Enhanced toast notification with icon
+    function showToastWithIcon(message, type = 'success') {
         const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
-            ${message}
-        `;
+        toast.className = `toast ${type}`;
+
+        let iconClass = 'fas fa-info-circle';
+        switch(type) {
+            case 'success': iconClass = 'fas fa-check-circle'; break;
+            case 'error': iconClass = 'fas fa-exclamation-triangle'; break;
+            case 'warning': iconClass = 'fas fa-exclamation-circle'; break;
+            case 'info': iconClass = 'fas fa-info-circle'; break;
+        }
+
+        toast.innerHTML = `<i class="${iconClass}"></i> ${message}`;
         document.body.appendChild(toast);
 
         setTimeout(() => toast.classList.add('show'), 100);
@@ -686,33 +856,61 @@
         }, 3000);
     }
 
-    // Search functionality
-    function searchTable() {
+    // Search/filter functionality (unified)
+    function filterData() {
         const input = document.getElementById('searchInput');
-        const filter = input.value.toLowerCase();
+        const filter = (input && input.value || '').toLowerCase();
         const table = document.getElementById('dataTable');
-        const rows = table.getElementsByTagName('tr');
+        if (!table) return;
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        let visible = 0;
 
-        for (let i = 1; i < rows.length; i++) {
+        for (let i = 0; i < rows.length; i++) {
             const cells = rows[i].getElementsByTagName('td');
             let found = false;
-
             for (let j = 0; j < cells.length - 1; j++) {
                 if (cells[j].textContent.toLowerCase().indexOf(filter) > -1) {
-                    found = true;
-                    break;
+                    found = true; break;
                 }
             }
-
             rows[i].style.display = found ? '' : 'none';
+            if (found) visible++;
         }
+
+        updateRowNumbers();
+        if (filter.length > 0) {
+            showToastWithIcon(`Ditemukan ${visible} hasil untuk "${filter}"`, visible > 0 ? 'info' : 'warning');
+        }
+        toggleClearButton();
     }
 
-    // Change entries per page
+    // Toggle clear button visibility
+    function toggleClearButton() {
+        const input = document.getElementById('searchInput');
+        const btn = document.querySelector('.search-box .clear-btn');
+        if (!input || !btn) return;
+        if (input.value.trim().length > 0) btn.style.display = 'block'; else btn.style.display = 'none';
+    }
+
+    function clearSearch() {
+        const input = document.getElementById('searchInput');
+        if (!input) return;
+        input.value = '';
+        filterData();
+        toggleClearButton();
+        input.focus();
+    }
+
+    // Change entries per page (supports 'all')
+    const entriesSelect = document.getElementById('entriesSelect');
     function changeEntries(value) {
+        value = value || (entriesSelect ? entriesSelect.value : null);
+        if (!value) return;
+
+        // Always request the server with the selected per_page value (including 'all')
         const url = new URL(window.location);
         url.searchParams.set('per_page', value);
-        url.searchParams.delete('page'); // Reset to first page
+        url.searchParams.delete('page');
         window.location.href = url.toString();
     }
 
@@ -842,5 +1040,110 @@
         url.searchParams.delete('page'); // Reset to first page
         window.location.href = url.toString();
     }
+
+    // Sorting logic
+    const thElements = document.querySelectorAll('th[data-sort]');
+    let currentSort = { column: null, direction: 'asc' };
+
+    function getColumnIndex(column) {
+        const headers = Array.from(document.querySelectorAll('#dataTable thead th'));
+        return headers.findIndex(h => h.getAttribute('data-sort') === column);
+    }
+
+    function updateSortIndicators() {
+        thElements.forEach(th => {
+            th.classList.remove('active');
+            const up = th.querySelector('i.sort-up');
+            const down = th.querySelector('i.sort-down');
+            if (up) up.classList.remove('active-up');
+            if (down) down.classList.remove('active-down');
+        });
+
+        if (currentSort.column) {
+            const activeTh = document.querySelector(`th[data-sort="${currentSort.column}"]`);
+            if (activeTh) {
+                activeTh.classList.add('active');
+                const up = activeTh.querySelector('i.sort-up');
+                const down = activeTh.querySelector('i.sort-down');
+                if (up) up.classList.remove('active-up');
+                if (down) down.classList.remove('active-down');
+                if (currentSort.direction === 'asc') {
+                    if (up) up.classList.add('active-up');
+                } else {
+                    if (down) down.classList.add('active-down');
+                }
+            }
+        }
+    }
+
+    function sortTable(column) {
+        const table = document.getElementById('dataTable');
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        if (currentSort.column === column) {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.column = column;
+            currentSort.direction = 'asc';
+        }
+
+        updateSortIndicators();
+
+        rows.sort((a, b) => {
+            const aVal = a.cells[getColumnIndex(column)].textContent.trim();
+            const bVal = b.cells[getColumnIndex(column)].textContent.trim();
+
+            let comparison = 0;
+            if (column === 'no') {
+                comparison = parseInt(aVal) - parseInt(bVal);
+            } else if (column === 'harga') {
+                comparison = parseInt(aVal.replace(/[^\d]/g, '')) - parseInt(bVal.replace(/[^\d]/g, ''));
+            } else {
+                comparison = aVal.localeCompare(bVal);
+            }
+
+            return currentSort.direction === 'asc' ? comparison : -comparison;
+        });
+
+        // Reattach rows
+        rows.forEach(r => tbody.appendChild(r));
+    }
+
+    // Attach click handlers
+    thElements.forEach((th, idx) => {
+        th.style.cursor = 'pointer';
+        th.addEventListener('click', () => {
+            const col = th.getAttribute('data-sort');
+            sortTable(col);
+        });
+    });
+
+    // Wire up entries select and search input behaviors
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const entries = document.getElementById('entriesSelect');
+        const btnExport = document.getElementById('btnExport');
+        const btnPrint = document.getElementById('btnPrint');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', filterData);
+            // Initialize clear button visibility
+            toggleClearButton();
+        }
+
+        if (entries) {
+            entries.addEventListener('change', function() { changeEntries(this.value); });
+        }
+
+        if (btnExport) {
+            btnExport.addEventListener('click', function() { showToastWithIcon('Export belum diimplementasikan', 'info'); });
+        }
+
+        if (btnPrint) {
+            btnPrint.addEventListener('click', function() { window.print(); });
+        }
+    });
+
 </script>
 @endsection

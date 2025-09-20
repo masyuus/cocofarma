@@ -14,15 +14,21 @@ class Produk extends Model
     protected $fillable = [
         'kode_produk',
         'nama_produk',
+        'kategori',
         'satuan',
         'harga_jual',
+        'stok',
+        'minimum_stok',
+        'foto',
         'deskripsi',
         'status'
     ];
 
     protected $casts = [
         'harga_jual' => 'decimal:2',
-        'status' => 'string'
+        'stok' => 'integer',
+        'minimum_stok' => 'integer',
+        'status' => 'boolean'
     ];
 
     // Relasi dengan PesananItem
@@ -46,12 +52,12 @@ class Produk extends Model
     // Accessor untuk status produk
     public function getStatusLabelAttribute()
     {
-        return $this->status === 'aktif' ? 'Aktif' : 'Nonaktif';
+        return $this->status ? 'Aktif' : 'Nonaktif';
     }
 
     // Scope untuk produk aktif
     public function scopeAktif($query)
     {
-        return $query->where('status', 'aktif');
+        return $query->where('status', true);
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\BahanBaku;
 use App\Models\MasterBahanBaku;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
 class BahanBakuController extends Controller
 {
@@ -27,7 +29,21 @@ class BahanBakuController extends Controller
         }
 
         $perPage = request('per_page', 5); // Default 5, bisa diubah via parameter
-        $bahanBakus = $query->paginate($perPage)->appends(request()->query());
+
+        if ($perPage === 'all') {
+            // Return all results but wrap them in a paginator so the view stays compatible
+            $allItems = $query->get();
+            $currentPage = Paginator::resolveCurrentPage();
+            $perPageCount = $allItems->count() ?: 1; // avoid zero
+            $currentItems = $allItems->slice(($currentPage - 1) * $perPageCount, $perPageCount)->values();
+
+            $bahanBakus = new LengthAwarePaginator($currentItems, $allItems->count(), $perPageCount, $currentPage, [
+                'path' => Paginator::resolveCurrentPath(),
+                'query' => request()->query()
+            ]);
+        } else {
+            $bahanBakus = $query->paginate((int) $perPage)->appends(request()->query());
+        }
 
         return view($viewPath, compact('bahanBakus'));
     }
@@ -58,6 +74,11 @@ class BahanBakuController extends Controller
         $routeName = $isMaster ? 'backoffice.master-bahan.index' : 'backoffice.bahanbaku.index';
 
         if ($isMaster) {
+            // Ensure kode_bahan is unique server-side even if client generated one
+            $generatedKode = $this->generateUniqueKodeMaster($request->input('kode_bahan'), $request->input('nama_bahan'));
+            // Merge back into request so validation sees final kode
+            $request->merge(['kode_bahan' => $generatedKode]);
+
             // Validation untuk master bahan
             $request->validate([
                 'kode_bahan' => 'required|string|max:50|unique:master_bahan_baku,kode_bahan',
@@ -106,6 +127,38 @@ class BahanBakuController extends Controller
 
             return redirect()->route($routeName)->with('success', 'Bahan baku berhasil dibuat.');
         }
+    }
+
+    /**
+     * Generate a unique kode for MasterBahanBaku.
+     * If a kode is provided it will be used as base; otherwise generated from name + date.
+     * Appends -001, -002 ... if collisions occur.
+     */
+    private function generateUniqueKodeMaster(?string $requestedKode, ?string $nama)
+    {
+        // Use submitted kode if present (clean), otherwise build from name and date
+        if ($requestedKode && trim($requestedKode) !== '') {
+            $base = strtoupper(preg_replace('/[^A-Z0-9]/', '', $requestedKode));
+        } else {
+            $today = now();
+            $dateString = $today->format('ymd'); // YYMMDD
+            $cleanName = $nama ? strtoupper(preg_replace('/[^A-Z0-9]/', '', $nama)) : '';
+            $cleanName = substr($cleanName, 0, 4);
+            $base = 'MB' . $dateString . ($cleanName ?: '');
+        }
+
+        $candidate = $base;
+        $suffix = 1;
+
+        // Ensure uniqueness by appending a numeric suffix if needed
+        while (\App\Models\MasterBahanBaku::where('kode_bahan', $candidate)->exists()) {
+            $candidate = $base . '-' . str_pad($suffix, 3, '0', STR_PAD_LEFT);
+            $suffix++;
+            // safety: avoid infinite loop
+            if ($suffix > 9999) break;
+        }
+
+        return $candidate;
     }
 
     /**

@@ -26,6 +26,14 @@
         margin: 0;
         padding: 0;
         font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    /* Smaller, muted up/down icons that stack vertically */
+    .table th i.sort-up,
+    .table th i.sort-down {
+        color: rgba(0,0,0,0.35);
+        font-size: 0.65rem;
+        margin-left: 6px;
+    }
     }
     
     html, body {
@@ -34,6 +42,28 @@
         overflow-y: auto;
     }
     
+
+    .sort-icons {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-left: 8px;
+        vertical-align: middle;
+        line-height: 1;
+    }
+
+    .table th .sort-icons i { margin: 0; padding: 0; height: 12px; }
+
+    /* Bring the two arrows closer so they visually connect */
+    .table th .sort-icons i.sort-up { margin-bottom: -5px; }
+    .table th .sort-icons i.sort-down { margin-top: -5px; }
+
+    .table th.active i.sort-up.active-up,
+    .table th.active i.sort-down.active-down {
+        color: #000 !important;
+        font-size: 0.75rem;
+    }
     .container {
         max-width: 1100px;
         margin: 0 auto;
@@ -102,7 +132,7 @@
         border: 1px solid var(--light-gray);
         border-radius: var(--border-radius);
         font-size: 0.9rem;
-        width: 220px;
+        width: 250px;
         transition: var(--transition);
     }
     
@@ -110,6 +140,7 @@
         outline: none;
         border-color: var(--primary);
         box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        width: 280px; /* expand on focus to match master-bahan */
     }
     
     .search-box i {
@@ -804,39 +835,71 @@
             <div class="entries-select">
                 <label for="entriesSelect">Tampilkan</label>
                 <select id="entriesSelect">
-                    <option value="5" {{ request('per_page', 5) == 5 ? 'selected' : '' }}>5</option>
-                    <option value="10" {{ request('per_page', 5) == 10 ? 'selected' : '' }}>10</option>
-                    <option value="25" {{ request('per_page', 5) == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request('per_page', 5) == 50 ? 'selected' : '' }}>50</option>
-                    <option value="100" {{ request('per_page', 5) == 100 ? 'selected' : '' }}>100</option>
+                    <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
                     <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua</option>
                 </select>
                 <span>entri</span>
             </div>
             
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Cari bahan baku...">
-            </div>
+            <!-- search moved to right-controls to match master-bahan layout -->
         </div>
         
         <div class="right-controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Cari bahan baku..." value="{{ request('search') }}">
+                <button type="button" class="clear-btn" onclick="clearSearch()" style="display:none;"><i class="fas fa-times"></i></button>
+            </div>
+
             <button class="btn btn-success" id="btnExport"><i class="fas fa-file-export"></i> Export</button>
             <button class="btn btn-primary" id="btnPrint"><i class="fas fa-print"></i> Print</button>
         </div>
     </div>
     
     <div class="table-responsive">
-        <table id="dataTable">
+    <table class="table" id="dataTable">
         <thead>
             <tr>
                 <th data-sort="no" style="width: 6%;">No</th>
-                <th data-sort="kode" style="width: 12%;">Kode Bahan <i class="fas fa-sort"></i></th>
-                <th data-sort="nama" style="width: 20%;">Nama Bahan <i class="fas fa-sort"></i></th>
-                <th data-sort="master" style="width: 20%;">Master Bahan <i class="fas fa-sort"></i></th>
-                <th data-sort="satuan" style="width: 10%;">Satuan <i class="fas fa-sort"></i></th>
-                <th data-sort="stok" style="width: 12%;">Total Stok <i class="fas fa-sort"></i></th>
-                <th data-sort="status" style="width: 10%;">Status <i class="fas fa-sort"></i></th>
+                <th data-sort="kode" style="width: 12%;">Kode Bahan
+                    <span class="sort-icons">
+                        <i class="fas fa-sort-up sort-up"></i>
+                        <i class="fas fa-sort-down sort-down"></i>
+                    </span>
+                </th>
+                <th data-sort="nama" style="width: 20%;">Nama Bahan
+                    <span class="sort-icons">
+                        <i class="fas fa-sort-up sort-up"></i>
+                        <i class="fas fa-sort-down sort-down"></i>
+                    </span>
+                </th>
+                <th data-sort="master" style="width: 20%;">Master Bahan
+                    <span class="sort-icons">
+                        <i class="fas fa-sort-up sort-up"></i>
+                        <i class="fas fa-sort-down sort-down"></i>
+                    </span>
+                </th>
+                <th data-sort="satuan" style="width: 10%;">Satuan
+                    <span class="sort-icons">
+                        <i class="fas fa-sort-up sort-up"></i>
+                        <i class="fas fa-sort-down sort-down"></i>
+                    </span>
+                </th>
+                <th data-sort="stok" style="width: 12%;">Total Stok
+                    <span class="sort-icons">
+                        <i class="fas fa-sort-up sort-up"></i>
+                        <i class="fas fa-sort-down sort-down"></i>
+                    </span>
+                </th>
+                <th data-sort="status" style="width: 10%;">Status
+                    <span class="sort-icons">
+                        <i class="fas fa-sort-up sort-up"></i>
+                        <i class="fas fa-sort-down sort-down"></i>
+                    </span>
+                </th>
                 <th style="width: 13%;">Aksi</th>
             </tr>
         </thead>
@@ -1010,16 +1073,29 @@
     function changeEntries() {
         if (!entriesSelect) return;
         const entries = entriesSelect.value;
-        
-        // Update URL with new per_page parameter and reload page
+
+        // Request server with selected per_page (including 'all')
         const url = new URL(window.location);
-        if (entries === 'all') {
-            url.searchParams.set('per_page', '1000'); // Large number to show all data
-        } else {
-            url.searchParams.set('per_page', entries);
-        }
-        url.searchParams.delete('page'); // Reset to first page when changing entries
+        url.searchParams.set('per_page', entries === 'all' ? 'all' : entries);
+        url.searchParams.delete('page');
         window.location.href = url.toString();
+    }
+
+    // Toggle clear button visibility
+    function toggleClearButton() {
+        const input = document.getElementById('searchInput');
+        const btn = document.querySelector('.search-box .clear-btn');
+        if (!input || !btn) return;
+        if (input.value.trim().length > 0) btn.style.display = 'block'; else btn.style.display = 'none';
+    }
+
+    function clearSearch() {
+        const input = document.getElementById('searchInput');
+        if (!input) return;
+        input.value = '';
+        filterData();
+        toggleClearButton();
+        input.focus();
     }
     
     function sortTable(column) {
@@ -1034,22 +1110,26 @@
             currentSort.column = column;
             currentSort.direction = 'asc';
         }
-        
-        // Update UI to show current sort
+
+        // Reset all indicators
         thElements.forEach(th => {
             th.classList.remove('active');
-            const icon = th.querySelector('i');
-            if (icon) {
-                icon.className = 'fas fa-sort';
-            }
+            const up = th.querySelector('i.sort-up');
+            const down = th.querySelector('i.sort-down');
+            if (up) up.classList.remove('active-up');
+            if (down) down.classList.remove('active-down');
         });
-        
+
+        // Set active indicator on the clicked header
         const currentTh = document.querySelector(`th[data-sort="${column}"]`);
         if (currentTh) {
             currentTh.classList.add('active');
-            const currentIcon = currentTh.querySelector('i');
-            if (currentIcon) {
-                currentIcon.className = currentSort.direction === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
+            const up = currentTh.querySelector('i.sort-up');
+            const down = currentTh.querySelector('i.sort-down');
+            if (currentSort.direction === 'asc') {
+                if (up) up.classList.add('active-up');
+            } else {
+                if (down) down.classList.add('active-down');
             }
         }
         
