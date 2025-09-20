@@ -19,7 +19,7 @@ class PengaturanController extends Controller
      */
     public function index()
     {
-        $pengaturans = Pengaturan::orderBy('key')->get();
+        $pengaturans = Pengaturan::orderBy('nama_pengaturan')->get();
         return view('admin.pages.pengaturan.index-pengaturan', compact('pengaturans'));
     }
 

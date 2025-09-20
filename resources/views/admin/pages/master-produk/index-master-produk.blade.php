@@ -1,5 +1,9 @@
 @extends('admin.layouts.app')
 
+@php
+    $pageTitle = 'Master Produk';
+@endphp
+
 @section('title', 'Master Produk - Cocofarma')
 
 @section('content')
@@ -1036,7 +1040,7 @@
         <div class="col-sm-6 col-lg-3">
             <div class="stat-card bg-gradient-danger">
                 <div class="stat-title">Stok Rendah</div>
-                <div class="stat-value">{{ $produks->where('stok', '<=', 'minimum_stok')->count() }}</div>
+                <div class="stat-value">{{ $produks->filter(function($produk) { return $produk->stok <= $produk->minimum_stok; })->count() }}</div>
                 <div class="stat-sub">Perlu perhatian</div>
                 <i class="fas fa-exclamation-triangle stat-icon"></i>
             </div>
@@ -1141,7 +1145,7 @@
                                 </td>
                                 <td style="text-align: center;">
                                     <span class="status-indicator {{ $produk->status ? 'status-active' : 'status-inactive' }}"></span>
-                                    <span class="status-badge status-{{ $produk->status ? 'aktif' : 'nonaktif' }}">
+                                    <span class="status-badge status-{{ $produk->is_active ? 'aktif' : 'nonaktif' }}">
                                         {{ $produk->status_label }}
                                     </span>
                                 </td>
@@ -1548,8 +1552,8 @@
                     <div class="detail-item">
                         <div class="detail-label">Status</div>
                         <div class="detail-value">
-                            <span class="status-highlight status-${status ? 'aktif' : 'nonaktif'}">
-                                ${status ? 'Aktif' : 'Nonaktif'}
+                            <span class="status-highlight status-${status === 'aktif' ? 'aktif' : 'nonaktif'}">
+                                ${status === 'aktif' ? 'Aktif' : 'Nonaktif'}
                             </span>
                         </div>
                     </div>

@@ -28,7 +28,7 @@ class Produk extends Model
         'harga_jual' => 'decimal:2',
         'stok' => 'integer',
         'minimum_stok' => 'integer',
-        'status' => 'boolean'
+        'status' => 'string'
     ];
 
     // Relasi dengan PesananItem
@@ -52,12 +52,18 @@ class Produk extends Model
     // Accessor untuk status produk
     public function getStatusLabelAttribute()
     {
-        return $this->status ? 'Aktif' : 'Nonaktif';
+        return $this->status === 'aktif' ? 'Aktif' : 'Nonaktif';
+    }
+
+    // Accessor untuk boolean status (untuk kompatibilitas dengan views)
+    public function getIsActiveAttribute()
+    {
+        return $this->status === 'aktif';
     }
 
     // Scope untuk produk aktif
     public function scopeAktif($query)
     {
-        return $query->where('status', true);
+        return $query->where('status', 'aktif');
     }
 }

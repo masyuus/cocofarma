@@ -168,7 +168,7 @@
   <!-- Breadcrumb -->
   <div class="breadcrumb">
     <span>🏠</span>
-    <span><a href="{{ route('backoffice.dashboard') }}" style="text-decoration: none; color: inherit;">Backoffice</a></span>
+    <span><a href="{{ route('backoffice.dashboard') }}" style="text-decoration: none; color: inherit;">BackOffice</a></span>
     @if(isset($breadcrumb) && is_array($breadcrumb))
       @foreach($breadcrumb as $item)
         <span>/</span>
@@ -184,9 +184,30 @@
           </span>
         @endif
       @endforeach
+    @elseif(isset($pageTitle) && $pageTitle !== 'Dashboard')
+      @php
+        $module = '';
+        if(str_contains($pageTitle, 'Master')) {
+          $module = 'Master Data';
+        } elseif(str_contains($pageTitle, 'Produksi')) {
+          $module = 'Operasional';
+        } elseif(in_array($pageTitle, ['Pesanan', 'Transaksi', 'Bahan Baku'])) {
+          $module = 'Operasional';
+        } elseif($pageTitle === 'Laporan') {
+          $module = 'Laporan';
+        } elseif($pageTitle === 'Pengaturan') {
+          $module = 'Pengaturan';
+        }
+      @endphp
+      @if($module)
+        <span>/</span>
+        <span>{{ $module }}</span>
+      @endif
+      <span>/</span>
+      <span class="active">{{ $pageTitle }}</span>
     @else
       <span>/</span>
-      <span class="active">{{ $pageTitle ?? 'Admin Panel' }}</span>
+      <span class="active">{{ $pageTitle ?? 'Dashboard' }}</span>
     @endif
   </div>
 

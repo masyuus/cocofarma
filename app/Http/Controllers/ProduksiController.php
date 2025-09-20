@@ -23,7 +23,7 @@ class ProduksiController extends Controller
             ->orderBy('tanggal_produksi', 'desc')
             ->paginate(15);
 
-        return view('produksi.index', compact('produksis'));
+        return view('admin.pages.produksi.index-produksi', compact('produksis'));
     }
 
     public function create()
@@ -33,7 +33,7 @@ class ProduksiController extends Controller
         $tungkus = Tungku::aktif()->get();
         $bahanBakus = BahanBaku::aktif()->get();
 
-        return view('produksi.create', compact('produks', 'batchProduksis', 'tungkus', 'bahanBakus'));
+        return view('admin.pages.produksi.create-produksi', compact('produks', 'batchProduksis', 'tungkus', 'bahanBakus'));
     }
 
     public function store(Request $request)
@@ -88,7 +88,7 @@ class ProduksiController extends Controller
     {
         $produksi->load(['produk', 'batchProduksi.tungku', 'produksiBahans.bahanBaku', 'produksiBahans.stokBahanBaku', 'user']);
 
-        return view('produksi.show', compact('produksi'));
+        return view('admin.pages.produksi.show-produksi', compact('produksi'));
     }
 
     public function edit(Produksi $produksi)
@@ -103,7 +103,7 @@ class ProduksiController extends Controller
         $tungkus = Tungku::aktif()->get();
         $bahanBakus = BahanBaku::aktif()->get();
 
-        return view('produksi.edit', compact('produksi', 'produks', 'batchProduksis', 'tungkus', 'bahanBakus'));
+        return view('admin.pages.produksi.edit-produksi', compact('produksi', 'produks', 'batchProduksis', 'tungkus', 'bahanBakus'));
     }
 
     public function update(Request $request, Produksi $produksi)

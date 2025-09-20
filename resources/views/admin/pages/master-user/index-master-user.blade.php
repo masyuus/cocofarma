@@ -1,7 +1,12 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Master User')
+@php
+    $pageTitle = 'Master User';
+@endphp
+
+@section('title', 'Master User - Cocofarma')
 
 @section('content')
 
 @endsection
+

@@ -1,5 +1,9 @@
 @extends('admin.layouts.app')
 
+@php
+    $pageTitle = 'Bahan Baku';
+@endphp
+
 @section('title', 'Bahan Baku - Cocofarma')
 
 @section('content')
